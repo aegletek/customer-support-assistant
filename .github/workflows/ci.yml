@@ -28,7 +28,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: nagaraju-ssa/augent-repo
-          ref: ${{ vars.AUGENT_CORE_REF || '6b15ec222edb0c3154278299a22013b433646750' }}
+          ref: ${{ vars.AUGENT_CORE_REF || 'v0.1.0' }}
           token: ${{ secrets.AUGENT_CORE_GITHUB_TOKEN }}
           path: .dependencies/augent-core
           persist-credentials: false

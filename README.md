@@ -23,11 +23,11 @@ before adding LLMs, databases, observability, or other external services.
 
 ## Install with private GitHub source
 
-For local development, install the pinned core revision and then this repo:
+For local development, install the pinned core release and then this repo:
 
 ```powershell
 python -m pip install `
-  "augent-core @ git+https://github.com/nagaraju-ssa/augent-repo.git@6b15ec222edb0c3154278299a22013b433646750"
+  "augent-core @ git+https://github.com/nagaraju-ssa/augent-repo.git@v0.1.0"
 python -m pip install -e ".[test]"
 ```
 
@@ -73,8 +73,8 @@ The workflow defaults to the private GitHub source. Add this repository secret:
 
 Optional repository variables and secrets:
 
-- `AUGENT_CORE_REF`: approved immutable core commit; the workflow has a pinned
-  default.
+- `AUGENT_CORE_REF`: approved immutable core tag or commit; the workflow
+  defaults to `v0.1.0`.
 - `AUGENT_CORE_SOURCE=azure`: resolve the core package from Azure Artifacts.
 - `AUGENT_PYPI_INDEX_URL`: authenticated Azure Artifacts Python index URL.
 
