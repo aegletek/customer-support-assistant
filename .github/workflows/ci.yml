@@ -1,0 +1,59 @@
+name: Use-case CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+env:
+  AUGENT_CORE_SOURCE: ${{ vars.AUGENT_CORE_SOURCE || 'github' }}
+  PIP_EXTRA_INDEX_URL: ${{ secrets.AUGENT_PYPI_INDEX_URL }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check out private Augent Core
+        if: env.AUGENT_CORE_SOURCE == 'github'
+        uses: actions/checkout@v4
+        with:
+          repository: nagaraju-ssa/augent-repo
+          ref: ${{ vars.AUGENT_CORE_REF || '6b15ec222edb0c3154278299a22013b433646750' }}
+          token: ${{ secrets.AUGENT_CORE_GITHUB_TOKEN }}
+          path: .dependencies/augent-core
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install Augent Core from GitHub checkout
+        if: env.AUGENT_CORE_SOURCE == 'github'
+        run: python -m pip install ./.dependencies/augent-core
+
+      - name: Install use case
+        run: python -m pip install -e ".[test]"
+
+      - name: Run tests
+        run: python -m pytest
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install build
+      - run: python -m build
