@@ -1,0 +1,25 @@
+workflow:
+  name: Customer Support Assistant
+  description: Deterministic customer support triage workflow.
+  execution_adapter: native
+  start: intake
+  nodes:
+    - name: intake
+      capability: support_intake
+    - name: classify
+      capability: support_classification
+    - name: knowledge
+      capability: support_knowledge
+    - name: respond
+      capability: support_response
+    - name: persist
+      capability: support_persistence
+  edges:
+    - from: intake
+      to: classify
+    - from: classify
+      to: knowledge
+    - from: knowledge
+      to: respond
+    - from: respond
+      to: persist

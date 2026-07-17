@@ -20,7 +20,7 @@ async def run(task: str) -> str:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Run Augent Use Case")
+    parser = argparse.ArgumentParser(description="Run Customer Support Assistant")
     parser.add_argument("--task", required=True)
     args = parser.parse_args()
     print(asyncio.run(run(args.task)))
