@@ -129,7 +129,8 @@ The workflow defaults to the private GitHub source. Add this repository secret:
 Optional repository variables and secrets:
 
 - `AUGENT_CORE_REF`: approved immutable core tag or commit; the workflow
-  defaults to `v0.1.0`.
+  defaults to the verified local-demo stability commit
+  `ab6504b389240aa95b7de1d691a081cd06e9d2f4`.
 - `AUGENT_CORE_SOURCE=azure`: resolve the core package from Azure Artifacts.
 - `AUGENT_PYPI_INDEX_URL`: authenticated Azure Artifacts Python index URL.
 
