@@ -62,6 +62,18 @@ python -m customer_support_assistant.cli --task "Unable to access monthly statem
 uvicorn customer_support_assistant.api:create_app --factory --reload
 ```
 
+### Local demo endpoints
+
+- Swagger UI: `http://127.0.0.1:8030/docs`
+- Readiness: `http://127.0.0.1:8030/health/ready`
+- Admin Dashboard: `http://127.0.0.1:8010/admin/`
+- Workflow: `POST /support/triage`
+- Stored case: `GET /cases/{case_id}`
+
+The Admin Dashboard catalog links back to this README and the source
+repository. It receives sanitized workflow telemetry; ticket content,
+knowledge payloads, and recommended responses remain owned by this use case.
+
 The approved deterministic API contract is:
 
 - `GET /health/`
@@ -94,12 +106,12 @@ the Langfuse trace with the Admin workflow run.
 
 ## Build the demo image
 
-Build Augent Core first as `augent-core:demo-443123d`, then build this
+Build Augent Core first as `augent-core:demo-205aab8`, then build this
 application layer:
 
 ```powershell
 docker build `
-  --build-arg AUGENT_CORE_IMAGE=augent-core:demo-443123d `
+  --build-arg AUGENT_CORE_IMAGE=augent-core:demo-205aab8 `
   --tag customer-support-assistant:demo-0.1.0 `
   .
 ```
