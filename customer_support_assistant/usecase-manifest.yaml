@@ -22,10 +22,10 @@ api:
 documentation:
   - type: developer_guide
     title: Customer Support Assistant README
-    url: https://github.com/nagaraju-ssa/customer-support-assistant/blob/main/README.md
+    url: https://github.com/aegletek/customer-support-assistant/blob/main/README.md
   - type: repository
     title: Source repository
-    url: https://github.com/nagaraju-ssa/customer-support-assistant
+    url: https://github.com/aegletek/customer-support-assistant
 
 deployment:
   provider: local

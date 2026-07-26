@@ -33,7 +33,7 @@ For local development, install the pinned core release and then this repo:
 
 ```powershell
 python -m pip install `
-  "orbit-core @ git+https://github.com/nagaraju-ssa/orbit-repo.git@v0.1.0"
+  "orbit-core @ git+https://github.com/aegletek/orbit-repo.git@v0.1.0"
 python -m pip install -e ".[test]"
 ```
 
@@ -136,7 +136,7 @@ After initialization, use the renamed package in the CLI and Uvicorn commands.
 The workflow defaults to the private GitHub source. Add this repository secret:
 
 - `ORBIT_CORE_GITHUB_TOKEN`: read-only fine-grained token for the private
-  `nagaraju-ssa/orbit-repo` repository.
+  `aegletek/orbit-repo` repository.
 
 Optional repository variables and secrets:
 
