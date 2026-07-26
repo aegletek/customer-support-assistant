@@ -1,0 +1,74 @@
+schema_version: "1.0"
+id: customer-support-assistant
+name: Customer Support Assistant
+description: Native customer support triage workflow powered by Orbit Core.
+version: 0.1.0
+
+owner:
+  team: Customer Experience AI Team
+
+lifecycle_status: active
+
+runtime:
+  orbit_core_version: 0.1.0
+  python_version: "3.10"
+  environment: local
+
+api:
+  base_url: http://127.0.0.1:8030
+  health_url: http://127.0.0.1:8030/health/ready
+  openapi_url: http://127.0.0.1:8030/openapi.json
+
+documentation:
+  - type: developer_guide
+    title: Customer Support Assistant README
+    url: https://github.com/nagaraju-ssa/customer-support-assistant/blob/main/README.md
+  - type: repository
+    title: Source repository
+    url: https://github.com/nagaraju-ssa/customer-support-assistant
+
+deployment:
+  provider: local
+  environment: local
+
+workflows:
+  - name: customer_support_triage
+    description: Validate, classify, enrich, respond to, and persist a support ticket.
+    execution_adapter: native
+    start: intake
+    nodes:
+      - name: intake
+        capability: support_intake
+      - name: classify
+        capability: support_classification
+      - name: knowledge
+        capability: support_knowledge
+      - name: respond
+        capability: support_response
+      - name: persist
+        capability: support_persistence
+    edges:
+      - source: intake
+        target: classify
+      - source: classify
+        target: knowledge
+      - source: knowledge
+        target: respond
+      - source: respond
+        target: persist
+
+tools:
+  - name: support_knowledge
+    description: Retrieves approved guidance from the versioned support knowledge base.
+    source: usecase
+    capabilities:
+      - support_knowledge
+  - name: case_persistence
+    description: Stores completed support cases in the use-case PostgreSQL database.
+    source: usecase
+    capabilities:
+      - case_persistence
+
+metadata:
+  business_domain: customer_support
+  data_classification: confidential

@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "customer-support-assistant"
+version = "0.1.0"
+description = "Customer support triage use case powered by Orbit Core"
+readme = "README.md"
+requires-python = ">=3.10,<3.13"
+dependencies = [
+    "orbit-core==0.1.0",
+    "python-dotenv>=1.0",
+    "sqlalchemy>=2.0",
+    "psycopg2-binary>=2.9",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+]
+
+[project.scripts]
+customer-support-assistant = "customer_support_assistant.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["customer_support_assistant*"]
+
+[tool.setuptools.package-data]
+customer_support_assistant = ["workflow.yaml", "usecase-manifest.yaml"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "strict"
