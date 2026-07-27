@@ -25,7 +25,8 @@ Admin telemetry use Augent Core's existing observability contracts.
 Copy `.env.example` to `.env` for live execution. Set
 `LIVE_LLM_ENABLED=true`, configure the OpenRouter model and credentials, and
 configure the Langfuse public key, secret key, and host. Never commit `.env` or
-credentials. Leave `LIVE_LLM_ENABLED=false` for deterministic execution.
+credentials. The validated local demo model is `openrouter/free`. Leave
+`LIVE_LLM_ENABLED=false` for deterministic execution.
 
 ## Install with private GitHub source
 
