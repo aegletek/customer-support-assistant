@@ -29,6 +29,7 @@ class UseCaseSettings(BaseSettings):
     langfuse_public_key: str = ""
     langfuse_secret_key: str = ""
     langfuse_host: str = Field(default="https://cloud.langfuse.com")
+    ui_display_name: str = "Local administrator"
 
     def require_database(self) -> None:
         if not self.database_url:

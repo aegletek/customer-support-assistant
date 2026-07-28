@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from typing import Protocol
 
 from orbit_core import BaseTool, ToolMetadata, ToolResponse
-from sqlalchemy import JSON, Column, DateTime, MetaData, String, Table, Text, create_engine, insert, select
+from sqlalchemy import JSON, Column, DateTime, MetaData, String, Table, Text, create_engine, desc, func, insert, or_, select
 from sqlalchemy.engine import Engine
 
 from .domain import guardrail_safe_uuid
@@ -73,6 +73,10 @@ class CaseRepository(Protocol):
 
     def get(self, case_id: str) -> dict | None: ...
 
+    def list_cases(self, *, search: str, page: int, page_size: int) -> tuple[list[dict], int]: ...
+
+    def trend(self, *, days: int = 14) -> list[dict]: ...
+
 
 class InMemoryCaseRepository:
     """Deterministic test boundary replaced by PostgreSQL in a later phase."""
@@ -90,6 +94,21 @@ class InMemoryCaseRepository:
     def get(self, case_id: str) -> dict | None:
         stored = self._cases.get(case_id)
         return deepcopy(stored) if stored is not None else None
+
+    def list_cases(self, *, search: str, page: int, page_size: int) -> tuple[list[dict], int]:
+        cases = list(self._cases.values())
+        if search:
+            needle = search.lower()
+            cases = [case for case in cases if needle in str(case).lower()]
+        cases.sort(key=lambda case: case["created_at"], reverse=True)
+        return deepcopy(cases[(page - 1) * page_size:page * page_size]), len(cases)
+
+    def trend(self, *, days: int = 14) -> list[dict]:
+        counts: dict[str, int] = {}
+        for case in self._cases.values():
+            key = str(case["created_at"])[:10]
+            counts[key] = counts.get(key, 0) + 1
+        return [{"date": key, "runs": value} for key, value in sorted(counts.items())[-days:]]
 
 
 class CustomerSupportCaseRepository:
@@ -141,6 +160,34 @@ class CustomerSupportCaseRepository:
             created_at = created_at.replace(tzinfo=timezone.utc)
         stored["created_at"] = created_at.isoformat()
         return stored
+
+    def list_cases(self, *, search: str, page: int, page_size: int) -> tuple[list[dict], int]:
+        filters = []
+        if search:
+            pattern = f"%{search.lower()}%"
+            filters.append(or_(
+                func.lower(self.cases.c.ticket_id).like(pattern),
+                func.lower(self.cases.c.classification).like(pattern),
+                func.lower(self.cases.c.priority).like(pattern),
+                func.lower(self.cases.c.workflow_id).like(pattern),
+            ))
+        query = select(self.cases).order_by(desc(self.cases.c.created_at))
+        count = select(func.count()).select_from(self.cases)
+        if filters:
+            query, count = query.where(*filters), count.where(*filters)
+        with self.engine.connect() as connection:
+            total = int(connection.execute(count).scalar_one())
+            rows = connection.execute(query.offset((page - 1) * page_size).limit(page_size)).mappings().all()
+        return [self.get(str(row["case_id"])) for row in rows], total
+
+    def trend(self, *, days: int = 14) -> list[dict]:
+        with self.engine.connect() as connection:
+            dates = connection.execute(select(self.cases.c.created_at)).scalars().all()
+        counts: dict[str, int] = {}
+        for date in dates:
+            key = date.date().isoformat()
+            counts[key] = counts.get(key, 0) + 1
+        return [{"date": key, "runs": value} for key, value in sorted(counts.items())[-days:]]
 
 
 class CasePersistenceTool(BaseTool):

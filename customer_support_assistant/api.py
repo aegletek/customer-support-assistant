@@ -1,11 +1,13 @@
 from contextlib import asynccontextmanager
 from datetime import datetime
 import json
+from pathlib import Path
 import time
 from typing import Literal
 from uuid import UUID
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field
 
 from orbit_core import WorkflowRequest
@@ -40,6 +42,13 @@ class SupportCaseResponse(BaseModel):
     workflow_id: UUID
     request_id: UUID
     created_at: datetime
+
+
+class CaseHistoryResponse(BaseModel):
+    items: list[SupportCaseResponse]
+    page: int
+    page_size: int
+    total: int
 
 
 def _case_response(payload: dict) -> SupportCaseResponse:
@@ -138,11 +147,26 @@ def create_app(
                 detail="Support workflow returned an invalid result",
             ) from exc
 
+    @app.get("/case-history/trend")
+    async def case_trend():
+        return {"daily": application.repository.trend()}
+
     @app.get("/cases/{case_id}", response_model=SupportCaseResponse)
     async def case(case_id: UUID):
         stored = application.repository.get(str(case_id))
         if stored is None:
             raise HTTPException(status_code=404, detail="Support case not found")
         return _case_response(stored)
+
+    @app.get("/cases", response_model=CaseHistoryResponse)
+    async def cases(search: str = Query(default="", max_length=120), page: int = Query(default=1, ge=1), page_size: int = Query(default=10, ge=1, le=50)):
+        items, total = application.repository.list_cases(search=search, page=page, page_size=page_size)
+        return CaseHistoryResponse(items=[_case_response(item) for item in items], page=page, page_size=page_size, total=total)
+
+    @app.get("/ui/config")
+    async def ui_config():
+        return {"display_name": application.settings.ui_display_name, "langfuse_url": application.settings.langfuse_host}
+
+    app.mount("/ui", StaticFiles(directory=Path(__file__).with_name("ui"), html=True), name="customer-support-ui")
 
     return app

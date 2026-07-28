@@ -67,6 +67,10 @@ uvicorn customer_support_assistant.api:create_app --factory --reload
 - Swagger UI: `http://127.0.0.1:8030/docs`
 - Readiness: `http://127.0.0.1:8030/health/ready`
 - Admin Dashboard: `http://127.0.0.1:8010/admin/`
+- Customer Support workspace: `http://127.0.0.1:8030/ui/`
+- Case history: `GET /cases?page=1&page_size=10&search=access`
+- Case trend: `GET /case-history/trend`
+- Workspace configuration: `GET /ui/config`
 - Workflow: `POST /support/triage`
 - Stored case: `GET /cases/{case_id}`
 
@@ -75,6 +79,17 @@ repository. It receives sanitized workflow telemetry; ticket content,
 knowledge payloads, and recommended responses remain owned by this use case.
 
 The approved deterministic API contract is:
+
+### Customer Support workspace
+
+The dedicated `/ui/` workspace provides a business-friendly support-triage
+dashboard with completed-case and recent-activity cards, a 14-day workflow
+trend, and a ticket form for ticket ID, subject, message, and customer tier.
+It includes searchable, paginated case history and full workflow-result
+details, with light and dark themes. The Workflow Traces action reads its
+portal URL from `LANGFUSE_HOST`; the display name uses `UI_DISPLAY_NAME` when
+the page is opened directly, or the
+authenticated Admin display name when opened from Orbit Admin.
 
 - `GET /health/`
 - `GET /health/ready`
