@@ -65,15 +65,21 @@ uvicorn customer_support_assistant.api:create_app --factory --reload
 
 ### Local demo endpoints
 
+- Workflow Dashboard: `http://127.0.0.1:8030/ui/`
 - Swagger UI: `http://127.0.0.1:8030/docs`
 - Readiness: `http://127.0.0.1:8030/health/ready`
 - Admin Dashboard: `http://127.0.0.1:8010/admin/`
 - Workflow: `POST /support/triage`
 - Stored case: `GET /cases/{case_id}`
+- Run history: `GET /api/cases?page=1&page_size=10&search=...`
+- Workflow trends: `GET /api/cases/trends?days=14`
 
-The Admin Dashboard catalog links back to this README and the source
-repository. It receives sanitized workflow telemetry; ticket content,
-knowledge payloads, and recommended responses remain owned by this use case.
+The workflow dashboard supports form-based execution, PostgreSQL-backed
+history, search, pagination, detailed input/output review, 14-day trends,
+dark/light themes, Swagger access, and Langfuse navigation. The Admin
+Dashboard's **Run Workflow** action opens this UI in a new tab. Admin receives
+sanitized workflow telemetry; ticket content, knowledge payloads, and
+recommended responses remain owned by this use case.
 
 The approved deterministic API contract is:
 
@@ -81,6 +87,8 @@ The approved deterministic API contract is:
 - `GET /health/ready`
 - `POST /support/triage`
 - `GET /cases/{case_id}`
+- `GET /api/cases`
+- `GET /api/cases/trends`
 - `GET /openapi.json`
 
 Example request:
@@ -125,6 +133,20 @@ Admin registration, heartbeat, and sanitized workflow telemetry are optional
 and fail open. Enable them at deployment time with the
 `AUGENT_ADMIN_CLIENT_*` settings documented in `.env.example`; do not bake
 Admin URLs or credentials into the image.
+
+## Azure DEV
+
+The current immutable Azure DEV image is built from commit `91998db` and runs
+in AKS behind Microsoft Entra perimeter SSO:
+
+- Workflow Dashboard:
+  `https://support.4.187.235.151.sslip.io/ui/`
+- Swagger: `https://support.4.187.235.151.sslip.io/docs`
+
+The deployment has one economical DEV replica, reads secrets through the
+platform Key Vault/CSI configuration, persists business records in the
+`customer_support` PostgreSQL database, and publishes sanitized telemetry to
+Admin. Promote by commit SHA and ACR image tag; do not deploy mutable tags.
 
 ```json
 {"task": "Review customer C-100"}
