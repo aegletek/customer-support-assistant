@@ -28,7 +28,13 @@ customer-support-assistant = "customer_support_assistant.cli:main"
 include = ["customer_support_assistant*"]
 
 [tool.setuptools.package-data]
-customer_support_assistant = ["workflow.yaml", "usecase-manifest.yaml"]
+customer_support_assistant = [
+    "workflow.yaml",
+    "usecase-manifest.yaml",
+    "ui/*.html",
+    "ui/*.js",
+    "ui/*.css",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

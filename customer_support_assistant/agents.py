@@ -67,6 +67,9 @@ class RespondAgent(WorkerAgent):
         guidance = " ".join(article["guidance"] for article in articles)
         return {
             "ticket_id": ticket["ticket_id"],
+            "subject": ticket["subject"],
+            "message": ticket["message"],
+            "customer_tier": ticket["customer_tier"],
             "classification": classification["category"],
             "priority": classification["priority"],
             "classification_reason": classification["reason"],

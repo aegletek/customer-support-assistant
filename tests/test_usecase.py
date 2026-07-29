@@ -182,6 +182,12 @@ def test_api_health_triage_and_case_retrieval():
         })
         payload = response.json()
         stored = client.get(f"/cases/{payload['case_id']}")
+        history = client.get("/api/cases?page=1&page_size=10")
+        filtered_history = client.get("/api/cases?search=DEMO-1001")
+        trends = client.get("/api/cases/trends?days=14")
+        dashboard = client.get("/ui/")
+        dashboard_javascript = client.get("/ui/app.js")
+        dashboard_styles = client.get("/ui/styles.css")
         missing = client.get("/cases/00000000-0000-0000-0000-000000000000")
         legacy = client.post("/execute", json={"task": "legacy"})
         assert onboarding.started is True
@@ -203,6 +209,9 @@ def test_api_health_triage_and_case_retrieval():
     assert readiness.json()["status"] == "ready"
     assert response.status_code == 200
     assert payload["ticket_id"] == "DEMO-1001"
+    assert payload["subject"] == TICKET["subject"]
+    assert payload["message"] == TICKET["message"]
+    assert payload["customer_tier"] == "gold"
     assert payload["classification"] == "account_access"
     assert payload["priority"] == "high"
     assert payload["knowledge_citations"] == ["support://knowledge/KB-ACCESS-001"]
@@ -210,6 +219,21 @@ def test_api_health_triage_and_case_retrieval():
     assert "tool_request" not in payload
     assert stored.status_code == 200
     assert stored.json() == payload
+    assert history.status_code == 200
+    assert history.json()["total"] == 1
+    assert history.json()["items"][0]["ticket_id"] == "DEMO-1001"
+    assert filtered_history.status_code == 200
+    assert filtered_history.json()["total"] == 1
+    assert trends.status_code == 200
+    assert sum(point["runs"] for point in trends.json()) == 1
+    assert dashboard.status_code == 200
+    assert "Augent-powered use case" in dashboard.text
+    assert 'id="history-search"' in dashboard.text
+    assert dashboard_javascript.status_code == 200
+    assert 'api("/support/triage"' in dashboard_javascript.text
+    assert "encodeURIComponent(state.search)" in dashboard_javascript.text
+    assert dashboard_styles.status_code == 200
+    assert '[data-theme="light"]' in dashboard_styles.text
     assert missing.status_code == 404
     assert legacy.status_code == 404
 
@@ -226,6 +250,38 @@ def test_api_rejects_invalid_or_unknown_ticket_fields() -> None:
     assert unknown_field.status_code == 422
 
 
+def test_history_api_accepts_legacy_demo_identifiers_and_structured_citations() -> None:
+    repository = InMemoryCaseRepository()
+    repository.save({
+        "ticket_id": "LEGACY-1001",
+        "classification": "statements_and_billing",
+        "priority": "medium",
+        "classification_reason": "Legacy demonstration case.",
+        "knowledge_citations": [{
+            "title": "Billing guide",
+            "url": "https://example.invalid/billing",
+        }],
+        "recommended_response": "Review the approved billing guide.",
+        "workflow_id": "demo-customer-success-002",
+        "request_id": "demo-customer-request-002",
+    })
+    application = build_application(
+        UseCaseSettings(
+            _env_file=None,
+            database_url="test-only",
+            live_llm_enabled=False,
+        ),
+        repository=repository,
+    )
+
+    with TestClient(create_app(application)) as client:
+        response = client.get("/api/cases")
+
+    assert response.status_code == 200
+    assert response.json()["items"][0]["workflow_id"] == "demo-customer-success-002"
+    assert response.json()["items"][0]["knowledge_citations"][0]["title"] == "Billing guide"
+
+
 def test_openapi_exposes_only_approved_business_paths() -> None:
     with TestClient(create_app(build_test_application())) as client:
         paths = client.get("/openapi.json").json()["paths"]
@@ -234,6 +290,8 @@ def test_openapi_exposes_only_approved_business_paths() -> None:
     assert "/health/ready" in paths
     assert "/support/triage" in paths
     assert "/cases/{case_id}" in paths
+    assert "/api/cases" in paths
+    assert "/api/cases/trends" in paths
     assert "/execute" not in paths
 
 
@@ -280,6 +338,9 @@ def test_sql_repository_round_trips_readable_case() -> None:
     repository = CustomerSupportCaseRepository(engine=engine)
     payload = {
         "ticket_id": "DEMO-DB-1",
+        "subject": "Cannot sign in",
+        "message": "The account page rejects my session.",
+        "customer_tier": "silver",
         "classification": "account_access",
         "priority": "high",
         "classification_reason": "Customer cannot access the account.",
@@ -295,6 +356,49 @@ def test_sql_repository_round_trips_readable_case() -> None:
     assert isinstance(stored["knowledge_citations"], list)
 
 
+def test_sql_repository_supports_search_pagination_and_trends() -> None:
+    engine = create_engine(
+        "sqlite+pysqlite://",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
+    repository = CustomerSupportCaseRepository(engine=engine)
+    for ticket_id, subject, category in [
+        ("DEMO-2001", "Cannot sign in", "account_access"),
+        ("DEMO-2002", "Unknown charge", "account_security"),
+        ("DEMO-2003", "Missing statement", "statements_and_billing"),
+    ]:
+        repository.save({
+            "ticket_id": ticket_id,
+            "subject": subject,
+            "message": f"Customer reports: {subject}",
+            "customer_tier": "standard",
+            "classification": category,
+            "priority": "high",
+            "classification_reason": "Test classification.",
+            "knowledge_citations": ["support://knowledge/test"],
+            "recommended_response": f"Approved response for {ticket_id}",
+            "workflow_id": f"workflow-{ticket_id}",
+            "request_id": f"request-{ticket_id}",
+        })
+
+    first_page, total = repository.list_cases(page=1, page_size=2)
+    second_page, _ = repository.list_cases(page=2, page_size=2)
+    filtered, filtered_total = repository.list_cases(
+        page=1,
+        page_size=10,
+        search="unknown charge",
+    )
+    trends = repository.trends(days=14)
+
+    assert total == 3
+    assert len(first_page) == 2
+    assert len(second_page) == 1
+    assert filtered_total == 1
+    assert filtered[0]["ticket_id"] == "DEMO-2002"
+    assert sum(point["runs"] for point in trends) == 3
+
+
 def test_default_application_requires_database_configuration() -> None:
     with pytest.raises(RuntimeError, match="DATABASE_URL"):
         build_application(
@@ -306,9 +410,14 @@ def test_default_application_requires_database_configuration() -> None:
         )
 
 
-def test_generated_identifiers_do_not_match_payment_card_pattern() -> None:
+@pytest.mark.asyncio
+async def test_generated_identifiers_do_not_trigger_payment_card_guard() -> None:
+    from augent_core import RuntimeContextBuilder
     from augent_core.guardrails.policies.pii_guard import PIIGuard
 
     identifier = guardrail_safe_uuid()
+    runtime = RuntimeContextBuilder.create("user", "workflow", "conversation")
+    runtime.state["guardrail_content"] = identifier
+    result = await PIIGuard().evaluate(runtime)
 
-    assert PIIGuard._patterns["payment_card"].search(identifier) is None
+    assert result.blocked is False

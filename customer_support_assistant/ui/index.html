@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Customer Support Assistant workflow dashboard" />
+    <title>Customer Support Assistant</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="./" aria-label="Customer Support Assistant home">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 32 32"><path d="M16 3a11 11 0 0 0-11 11v7a4 4 0 0 0 4 4h2v-9H7v-2a9 9 0 0 1 18 0v2h-4v9h3a5 5 0 0 1-5 4h-3v-2h3a3 3 0 0 0 3-2h1a4 4 0 0 0 4-4v-7A11 11 0 0 0 16 3Z"/></svg>
+          </span>
+          <span><strong>Customer Support Assistant</strong><small>Augent-powered use case</small></span>
+        </a>
+        <div class="header-actions">
+          <a class="header-link" href="/docs" target="_blank" rel="noreferrer noopener">API Docs <span>↗</span></a>
+          <a class="header-link trace-link" href="https://us.cloud.langfuse.com/" target="_blank" rel="noreferrer noopener">Workflow Traces <span>↗</span></a>
+          <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch color theme">
+            <span class="theme-icon" aria-hidden="true">☾</span>
+            <span id="theme-label">Dark</span>
+          </button>
+        </div>
+      </header>
+
+      <main>
+        <section class="metrics-grid" aria-label="Workflow summary">
+          <article class="metric-card">
+            <span class="metric-icon purple">◎</span>
+            <div><small>Total completed cases</small><strong id="metric-total">—</strong><p>Persisted support outcomes</p></div>
+          </article>
+          <article class="metric-card">
+            <span class="metric-icon blue">↗</span>
+            <div><small>Cases in last 7 days</small><strong id="metric-week">—</strong><p>Recent workflow activity</p></div>
+          </article>
+          <article class="metric-card">
+            <span class="metric-icon green">✓</span>
+            <div><small>Latest classification</small><strong class="metric-text" id="metric-classification">—</strong><p id="metric-priority">No completed case</p></div>
+          </article>
+          <article class="metric-card">
+            <span class="metric-icon amber">◇</span>
+            <div><small>Latest ticket</small><strong class="metric-text" id="metric-ticket">—</strong><p id="metric-latest">PostgreSQL persistence</p></div>
+          </article>
+        </section>
+
+        <section class="workspace-grid">
+          <article class="panel trend-panel">
+            <div class="panel-heading">
+              <div><p class="eyebrow">Workflow trends</p><h2>Completed support cases</h2></div>
+              <span class="period-chip">Last 14 days</span>
+            </div>
+            <div id="trend-chart" class="trend-chart" role="img" aria-label="Completed support workflows over the last 14 days"></div>
+            <div class="chart-footer"><span><i></i> Completed cases</span><small>Daily totals from persisted cases</small></div>
+          </article>
+
+          <aside class="panel run-panel">
+            <div class="panel-heading">
+              <div><p class="eyebrow">New support request</p><h2>Run workflow</h2></div>
+              <span class="agent-badge">5 agents</span>
+            </div>
+            <form id="support-form">
+              <div class="form-row">
+                <label><span>Ticket ID</span><input name="ticket_id" required maxlength="64" placeholder="e.g. DEMO-2001" /></label>
+                <label>
+                  <span>Customer tier</span>
+                  <select name="customer_tier">
+                    <option value="standard">Standard</option>
+                    <option value="silver">Silver</option>
+                    <option value="gold">Gold</option>
+                    <option value="platinum">Platinum</option>
+                  </select>
+                </label>
+              </div>
+              <label><span>Subject</span><input name="subject" required maxlength="200" placeholder="e.g. Unable to access monthly statement" /></label>
+              <label><span>Customer message</span><textarea name="message" required maxlength="5000" rows="3" placeholder="Describe the customer issue"></textarea></label>
+              <div class="form-row compact-row">
+                <label><span>User ID</span><input name="user_id" value="customer-support-ui" maxlength="120" /></label>
+                <label><span>Conversation ID</span><input name="conversation_id" value="customer-support-ui" maxlength="120" /></label>
+              </div>
+              <button class="run-button" id="run-button" type="submit">
+                <span class="button-icon">▶</span><span id="run-label">Start support workflow</span>
+              </button>
+              <p class="form-status" id="form-status" aria-live="polite">The completed case will appear first in run history.</p>
+            </form>
+          </aside>
+        </section>
+
+        <section class="panel history-panel">
+          <div class="panel-heading history-heading">
+            <div><p class="eyebrow">Run history</p><h2>Previous workflow details</h2></div>
+            <div class="history-controls">
+              <label class="history-search" for="history-search">
+                <span class="sr-only">Search run history</span>
+                <span class="search-icon" aria-hidden="true">⌕</span>
+                <input id="history-search" type="search" maxlength="100" autocomplete="off" placeholder="Search ticket, category, ID, or response" />
+              </label>
+              <div class="table-meta"><span id="result-count">0 cases</span><button id="refresh-button" type="button">↻ Refresh</button></div>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Completed</th><th>Ticket input</th><th>Outcome</th><th>Workflow ID</th><th><span class="sr-only">Actions</span></th></tr></thead>
+              <tbody id="history-body"></tbody>
+            </table>
+            <div class="table-empty" id="table-empty" hidden>
+              <span>◇</span><h3 id="empty-title">No completed support cases yet</h3><p id="empty-message">Run the workflow to create the first case.</p>
+            </div>
+          </div>
+          <div class="pagination">
+            <p id="page-summary">Page 1 of 1</p>
+            <div><button id="previous-page" type="button">← Previous</button><button id="next-page" type="button">Next →</button></div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <dialog id="case-dialog">
+      <div class="dialog-header">
+        <div><p class="eyebrow">Completed workflow</p><h2 id="dialog-title">Support case</h2></div>
+        <button id="close-dialog" type="button" aria-label="Close case details">×</button>
+      </div>
+      <div class="detail-facts">
+        <div><small>Ticket ID</small><strong id="detail-ticket">—</strong></div>
+        <div><small>Classification</small><strong id="detail-classification">—</strong></div>
+        <div><small>Priority</small><strong id="detail-priority">—</strong></div>
+        <div><small>Completed</small><strong id="detail-created">—</strong></div>
+        <div><small>Case ID</small><strong class="mono" id="detail-case-id">—</strong></div>
+        <div><small>Workflow ID</small><strong class="mono" id="detail-workflow-id">—</strong></div>
+      </div>
+      <section class="detail-section"><h3>Input</h3><pre id="detail-input"></pre></section>
+      <section class="detail-section"><h3>Recommended response</h3><pre id="detail-output"></pre></section>
+      <details class="evidence-details"><summary>View classification reasoning and citations</summary><pre id="detail-evidence"></pre></details>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>

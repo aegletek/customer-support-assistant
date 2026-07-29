@@ -1,11 +1,14 @@
 from contextlib import asynccontextmanager
 from datetime import datetime
 import json
+from pathlib import Path
 import time
-from typing import Literal
+from typing import Any, Literal
 from uuid import UUID
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
+from fastapi.responses import RedirectResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field
 
 from augent_core import WorkflowRequest
@@ -30,16 +33,34 @@ class SupportTriageRequest(BaseModel):
 class SupportCaseResponse(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    case_id: UUID
+    case_id: str
     ticket_id: str
+    subject: str = ""
+    message: str = ""
+    customer_tier: str = "standard"
     classification: str
     priority: str
     classification_reason: str
-    knowledge_citations: list[str]
+    knowledge_citations: list[Any]
     recommended_response: str
-    workflow_id: UUID
-    request_id: UUID
+    workflow_id: str
+    request_id: str
     created_at: datetime
+
+
+class SupportCaseListResponse(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    items: list[SupportCaseResponse]
+    page: int
+    page_size: int
+    total: int
+    total_pages: int
+
+
+class WorkflowTrendPoint(BaseModel):
+    day: str
+    runs: int
 
 
 def _case_response(payload: dict) -> SupportCaseResponse:
@@ -67,6 +88,12 @@ def create_app(
         version="0.1.0",
         lifespan=lifespan,
     )
+    ui_directory = Path(__file__).resolve().parent / "ui"
+    app.mount("/ui", StaticFiles(directory=ui_directory, html=True), name="ui")
+
+    @app.get("/", include_in_schema=False)
+    async def dashboard_redirect():
+        return RedirectResponse(url="/ui/")
 
     @app.get("/health/")
     async def health():
@@ -144,5 +171,28 @@ def create_app(
         if stored is None:
             raise HTTPException(status_code=404, detail="Support case not found")
         return _case_response(stored)
+
+    @app.get("/api/cases", response_model=SupportCaseListResponse)
+    async def cases(
+        page: int = Query(default=1, ge=1),
+        page_size: int = Query(default=10, ge=1, le=50),
+        search: str | None = Query(default=None, max_length=100),
+    ):
+        stored_cases, total = application.repository.list_cases(
+            page=page,
+            page_size=page_size,
+            search=search,
+        )
+        return SupportCaseListResponse(
+            items=[_case_response(stored) for stored in stored_cases],
+            page=page,
+            page_size=page_size,
+            total=total,
+            total_pages=max(1, (total + page_size - 1) // page_size),
+        )
+
+    @app.get("/api/cases/trends", response_model=list[WorkflowTrendPoint])
+    async def case_trends(days: int = Query(default=14, ge=7, le=90)):
+        return application.repository.trends(days=days)
 
     return app
