@@ -1,7 +1,7 @@
 schema_version: "1.0"
 id: customer-support-assistant
 name: Customer Support Assistant
-description: Native customer support triage workflow powered by Augent Core.
+description: Native customer support triage workflow powered by AvantiQ Core.
 version: 0.1.0
 
 owner:
@@ -10,7 +10,7 @@ owner:
 lifecycle_status: active
 
 runtime:
-  augent_core_version: 0.1.0
+  avantiq_core_version: 0.1.0
   python_version: "3.10"
   environment: local
 

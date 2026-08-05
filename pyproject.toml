@@ -5,11 +5,11 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "customer-support-assistant"
 version = "0.1.0"
-description = "Customer support triage use case powered by Augent Core"
+description = "Customer support triage use case powered by AvantiQ Core"
 readme = "README.md"
 requires-python = ">=3.10,<3.13"
 dependencies = [
-    "augent-core==0.1.0",
+    "avantiq-core==0.1.0",
     "python-dotenv>=1.0",
     "sqlalchemy>=2.0",
     "psycopg2-binary>=2.9",

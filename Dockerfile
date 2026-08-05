@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.7
 
-ARG AUGENT_CORE_IMAGE=augent-core:demo-443123d
-FROM ${AUGENT_CORE_IMAGE} AS runtime
+ARG AVANTIQ_CORE_IMAGE=avantiq-core:demo-443123d
+FROM ${AVANTIQ_CORE_IMAGE} AS runtime
 
 USER root
 WORKDIR /app
@@ -10,9 +10,9 @@ COPY pyproject.toml README.md ./
 COPY customer_support_assistant ./customer_support_assistant
 
 RUN pip install --no-cache-dir . \
-    && chown -R augent:augent /app
+    && chown -R avantiq:avantiq /app
 
-USER augent
+USER avantiq
 
 EXPOSE 8000
 

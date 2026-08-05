@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from augent_core.admin import (
+from avantiq_core.admin import (
     AdminClient,
     AdminClientSettings,
     AdminOnboarding,

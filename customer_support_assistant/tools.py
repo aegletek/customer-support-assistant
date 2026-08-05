@@ -3,7 +3,7 @@ from copy import deepcopy
 from datetime import datetime, timedelta, timezone
 from typing import Protocol
 
-from augent_core import BaseTool, ToolMetadata, ToolResponse
+from avantiq_core import BaseTool, ToolMetadata, ToolResponse
 from sqlalchemy import (
     JSON,
     Column,

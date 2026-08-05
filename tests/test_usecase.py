@@ -8,8 +8,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.pool import StaticPool
 import yaml
 
-from augent_core import ChatResponse, WorkflowRequest
-from augent_core.ai.llm.models import TokenUsage
+from avantiq_core import ChatResponse, WorkflowRequest
+from avantiq_core.ai.llm.models import TokenUsage
 from customer_support_assistant.api import create_app
 from customer_support_assistant.composition import WORKFLOW_NAME, build_application
 from customer_support_assistant.config import UseCaseSettings
@@ -227,7 +227,7 @@ def test_api_health_triage_and_case_retrieval():
     assert trends.status_code == 200
     assert sum(point["runs"] for point in trends.json()) == 1
     assert dashboard.status_code == 200
-    assert "Augent-powered use case" in dashboard.text
+    assert "AvantiQ-powered use case" in dashboard.text
     assert 'id="history-search"' in dashboard.text
     assert dashboard_javascript.status_code == 200
     assert 'api("/support/triage"' in dashboard_javascript.text
@@ -412,8 +412,8 @@ def test_default_application_requires_database_configuration() -> None:
 
 @pytest.mark.asyncio
 async def test_generated_identifiers_do_not_trigger_payment_card_guard() -> None:
-    from augent_core import RuntimeContextBuilder
-    from augent_core.guardrails.policies.pii_guard import PIIGuard
+    from avantiq_core import RuntimeContextBuilder
+    from avantiq_core.guardrails.policies.pii_guard import PIIGuard
 
     identifier = guardrail_safe_uuid()
     runtime = RuntimeContextBuilder.create("user", "workflow", "conversation")

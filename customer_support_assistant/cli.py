@@ -1,7 +1,7 @@
 import argparse
 import asyncio
 
-from augent_core import WorkflowRequest
+from avantiq_core import WorkflowRequest
 
 from .composition import WORKFLOW_NAME, build_application
 

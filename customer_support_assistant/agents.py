@@ -1,6 +1,6 @@
 import json
 
-from augent_core import (
+from avantiq_core import (
     ChatRequest,
     ToolRequest,
     UserMessage,

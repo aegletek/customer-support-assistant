@@ -11,8 +11,8 @@ from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field
 
-from augent_core import WorkflowRequest
-from augent_core.admin import AdminOnboarding, AdminWorkflowTelemetry, CostSource
+from avantiq_core import WorkflowRequest
+from avantiq_core.admin import AdminOnboarding, AdminWorkflowTelemetry, CostSource
 
 from .composition import UseCaseApplication, WORKFLOW_NAME, build_application
 from .domain import guardrail_safe_uuid

@@ -7,9 +7,9 @@ REPOSITORY_ROOT = Path(__file__).resolve().parents[1]
 def test_demo_container_extends_rehearsed_core_and_runs_non_root() -> None:
     dockerfile = (REPOSITORY_ROOT / "Dockerfile").read_text(encoding="utf-8")
 
-    assert "ARG AUGENT_CORE_IMAGE=augent-core:demo-443123d" in dockerfile
-    assert "FROM ${AUGENT_CORE_IMAGE} AS runtime" in dockerfile
-    assert "USER augent" in dockerfile
+    assert "ARG AVANTIQ_CORE_IMAGE=avantiq-core:demo-443123d" in dockerfile
+    assert "FROM ${AVANTIQ_CORE_IMAGE} AS runtime" in dockerfile
+    assert "USER avantiq" in dockerfile
     assert "customer_support_assistant.api:create_app" in dockerfile
     assert "/health/ready" in dockerfile
     assert "COPY . ." not in dockerfile

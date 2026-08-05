@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from augent_core import PromptTemplate, bootstrap, reload_settings
+from avantiq_core import PromptTemplate, bootstrap, reload_settings
 
 from .agents import AGENTS, LiveRespondAgent, RespondAgent
 from .config import UseCaseSettings, load_environment
