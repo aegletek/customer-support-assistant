@@ -48,12 +48,12 @@ Authenticate with the team's approved Azure Artifacts credential provider,
 then supply the feed as an extra index:
 
 ```powershell
-$env:PIP_EXTRA_INDEX_URL = "https://pkgs.dev.azure.com/ORG/PROJECT/_packaging/FEED/pypi/simple/"
+$env:PIP_EXTRA_INDEX_URL = "https://pkgs.dev.azure.com/avantiq-ai-platform/avantiq-repo/_packaging/avantiq-core/pypi/simple/"
 python -m pip install -e ".[test]"
 ```
 
 The declared `avantiq-core==0.1.0` dependency is then resolved from the private
-feed. Replace the placeholder feed URL with the organization-approved value.
+feed in the `avantiq-ai-platform` Azure DevOps organization.
 
 ## Run and test the workflow
 
