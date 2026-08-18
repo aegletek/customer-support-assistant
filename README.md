@@ -23,10 +23,11 @@ Admin telemetry use AvantiQ Core's existing observability contracts.
 ## Local verification
 
 Copy `.env.example` to `.env` for live execution. Set
-`LIVE_LLM_ENABLED=true`, configure the OpenRouter model and credentials, and
-configure the Langfuse public key, secret key, and host. Never commit `.env` or
-credentials. The validated local demo model is `openrouter/free`. Leave
-`LIVE_LLM_ENABLED=false` for deterministic execution.
+`LIVE_LLM_ENABLED=true`, configure the Azure OpenAI endpoint, API key,
+deployment, API version, and temperature, and configure this use case's own
+Langfuse public key, secret key, base URL, and project URL. Never commit `.env`
+or credentials, and do not reuse another use case's Langfuse project keys.
+Leave `LIVE_LLM_ENABLED=false` for deterministic execution.
 
 ## Install with private GitHub source
 
@@ -89,6 +90,7 @@ The approved deterministic API contract is:
 - `GET /cases/{case_id}`
 - `GET /api/cases`
 - `GET /api/cases/trends`
+- `GET /api/ui-config`
 - `GET /openapi.json`
 
 Example request:

@@ -107,6 +107,10 @@ def create_app(
             "version": app.version,
         }
 
+    @app.get("/api/ui-config")
+    async def ui_config():
+        return {"langfuse_project_url": application.settings.langfuse_project_url}
+
     @app.post("/support/triage", response_model=SupportCaseResponse)
     async def triage(request: SupportTriageRequest):
         workflow_id = guardrail_safe_uuid()

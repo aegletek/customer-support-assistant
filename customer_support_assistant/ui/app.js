@@ -12,6 +12,7 @@ const elements = {
   themeToggle: document.querySelector("#theme-toggle"),
   themeLabel: document.querySelector("#theme-label"),
   themeIcon: document.querySelector(".theme-icon"),
+  langfuseLink: document.querySelector("#langfuse-link"),
   metricTotal: document.querySelector("#metric-total"),
   metricWeek: document.querySelector("#metric-week"),
   metricClassification: document.querySelector("#metric-classification"),
@@ -65,6 +66,18 @@ async function api(path, options = {}) {
     // Keep the status-based message when a proxy returns non-JSON content.
   }
   throw new Error(message);
+}
+
+async function loadUiConfig() {
+  try {
+    const config = await api("/api/ui-config");
+    if (config.langfuse_project_url) {
+      elements.langfuseLink.href = config.langfuse_project_url;
+      elements.langfuseLink.hidden = false;
+    }
+  } catch {
+    // Traces remain hidden when UI configuration is unavailable.
+  }
 }
 
 function formatDate(value, options = {}) {
@@ -319,4 +332,5 @@ elements.dialog.addEventListener("click", (event) => {
 });
 
 initializeTheme();
+loadUiConfig();
 loadDashboard();

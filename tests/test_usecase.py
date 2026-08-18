@@ -62,6 +62,7 @@ def build_test_application():
             _env_file=None,
             database_url="test-only",
             live_llm_enabled=False,
+            langfuse_project_url="https://us.cloud.langfuse.com/project/customer-test",
         ),
         repository=InMemoryCaseRepository(),
     )
@@ -123,8 +124,8 @@ async def test_live_response_uses_llm_without_changing_routing_or_citations():
             _env_file=None,
             live_llm_enabled=True,
             database_url="test-only",
-            openrouter_api_key="",
-            openrouter_model="",
+            azure_openai_api_key="",
+            azure_openai_deployment="",
             langfuse_public_key="",
             langfuse_secret_key="",
         ),
@@ -159,13 +160,16 @@ def test_live_response_requires_provider_and_langfuse_configuration() -> None:
         _env_file=None,
         live_llm_enabled=True,
         database_url="test-only",
-        openrouter_api_key="",
-        openrouter_model="",
+        azure_openai_endpoint="",
+        azure_openai_api_key="",
+        azure_openai_deployment="",
         langfuse_public_key="",
         langfuse_secret_key="",
+        langfuse_base_url="",
+        langfuse_project_url="",
     )
 
-    with pytest.raises(RuntimeError, match="OPENROUTER_API_KEY"):
+    with pytest.raises(RuntimeError, match="AZURE_OPENAI_ENDPOINT"):
         settings.require_live_llm()
 
 
@@ -175,6 +179,7 @@ def test_api_health_triage_and_case_retrieval():
     with TestClient(create_app(application, onboarding=onboarding)) as client:
         health = client.get("/health/")
         readiness = client.get("/health/ready")
+        ui_config = client.get("/api/ui-config")
         response = client.post("/support/triage", json={
             **TICKET,
             "user_id": "test-user",
@@ -207,6 +212,10 @@ def test_api_health_triage_and_case_retrieval():
     }
     assert readiness.status_code == 200
     assert readiness.json()["status"] == "ready"
+    assert ui_config.json() == {
+        "langfuse_project_url": "https://us.cloud.langfuse.com/project/customer-test"
+    }
+    assert "key" not in " ".join(ui_config.json()).lower()
     assert response.status_code == 200
     assert payload["ticket_id"] == "DEMO-1001"
     assert payload["subject"] == TICKET["subject"]

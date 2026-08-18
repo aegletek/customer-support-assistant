@@ -23,12 +23,16 @@ class UseCaseSettings(BaseSettings):
     database_url: str = ""
     live_llm_enabled: bool = False
 
-    provider: str = "openrouter"
-    openrouter_api_key: str = ""
-    openrouter_model: str = ""
+    provider: str = "azure"
+    azure_openai_endpoint: str = ""
+    azure_openai_api_key: str = ""
+    azure_openai_deployment: str = ""
+    azure_openai_api_version: str = "2024-12-01-preview"
+    azure_openai_temperature: float = 0.2
     langfuse_public_key: str = ""
     langfuse_secret_key: str = ""
-    langfuse_host: str = Field(default="https://cloud.langfuse.com")
+    langfuse_base_url: str = Field(default="https://cloud.langfuse.com")
+    langfuse_project_url: str = ""
 
     def require_database(self) -> None:
         if not self.database_url:
@@ -38,19 +42,21 @@ class UseCaseSettings(BaseSettings):
 
     def missing_live_llm_settings(self) -> list[str]:
         required = {
-            "OPENROUTER_API_KEY": self.openrouter_api_key,
-            "OPENROUTER_MODEL": self.openrouter_model,
+            "AZURE_OPENAI_ENDPOINT": self.azure_openai_endpoint,
+            "AZURE_OPENAI_API_KEY": self.azure_openai_api_key,
+            "AZURE_OPENAI_DEPLOYMENT": self.azure_openai_deployment,
             "LANGFUSE_PUBLIC_KEY": self.langfuse_public_key,
             "LANGFUSE_SECRET_KEY": self.langfuse_secret_key,
-            "LANGFUSE_HOST": self.langfuse_host,
+            "LANGFUSE_BASE_URL": self.langfuse_base_url,
+            "LANGFUSE_PROJECT_URL": self.langfuse_project_url,
         }
         return [name for name, value in required.items() if not value]
 
     def require_live_llm(self) -> None:
         if not self.live_llm_enabled:
             return
-        if self.provider.lower() != "openrouter":
-            raise RuntimeError("Live Customer Support currently requires PROVIDER=openrouter.")
+        if self.provider.lower() != "azure":
+            raise RuntimeError("Live Customer Support requires PROVIDER=azure.")
         missing = self.missing_live_llm_settings()
         if missing:
             raise RuntimeError(
