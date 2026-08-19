@@ -3,7 +3,13 @@ from copy import deepcopy
 from datetime import datetime, timedelta, timezone
 from typing import Protocol
 
-from avantiq_core import BaseTool, ToolMetadata, ToolResponse
+from avantiq_core import (
+    BaseTool,
+    ToolMetadata,
+    ToolResponse,
+    database_engine_options,
+    get_settings,
+)
 from sqlalchemy import (
     JSON,
     Column,
@@ -179,7 +185,10 @@ class CustomerSupportCaseRepository:
     def __init__(self, database_url: str | None = None, engine: Engine | None = None) -> None:
         if engine is None and not database_url:
             raise ValueError("DATABASE_URL is required for case persistence")
-        self.engine = engine or create_engine(database_url, pool_pre_ping=True)
+        self.engine = engine or create_engine(
+            database_url,
+            **database_engine_options(get_settings(), database_url),
+        )
         self.metadata = MetaData()
         self.cases = Table(
             "customer_support_cases",

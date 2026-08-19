@@ -29,6 +29,11 @@ Langfuse public key, secret key, base URL, and project URL. Never commit `.env`
 or credentials, and do not reuse another use case's Langfuse project keys.
 Leave `LIVE_LLM_ENABLED=false` for deterministic execution.
 
+The example also defines bounded node and LLM retries, exponential backoff, a
+whole-workflow timeout, per-process workflow concurrency, LLM rate limiting,
+and SQLAlchemy pool controls. Attempt counts include the initial call, and all
+limits are per process/pod rather than distributed across replicas.
+
 ## Install with private GitHub source
 
 For local development, install the pinned core release and then this repo:
