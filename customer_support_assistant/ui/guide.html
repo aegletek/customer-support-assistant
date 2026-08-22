@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Guide | Customer Support Assistant</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="./experience.css" />
+</head>
+<body data-theme-key="customer-support-theme">
+  <main class="guide-page">
+    <header>
+      <div><p class="eyebrow">AvantiQ client demo guide</p><h1>Customer Support Assistant</h1><p>Turn a customer message into a classified, prioritized, evidence-grounded response with a complete support audit trail.</p></div>
+      <div class="guide-actions"><a href="./">Open dashboard</a><a href="/docs" target="_blank" rel="noreferrer">API docs ↗</a><button id="guide-theme" type="button">Light theme</button></div>
+    </header>
+    <section class="guide-grid">
+      <article class="guide-card"><p class="eyebrow">Quick start</p><h2>Run your first workflow</h2><ol><li>Return to the dashboard and enter a ticket ID, customer tier, subject, and customer message.</li><li>Start the five-agent workflow.</li><li>Inspect classification, priority, approved guidance citations, and recommended response.</li><li>Open the new history row to review the retained input and evidence.</li></ol></article>
+      <article class="guide-card"><p class="eyebrow">Multi-agent design</p><h2>What the agent team does</h2><ul><li>Intake validates the ticket and creates workflow context.</li><li>Classification identifies support category and operational priority.</li><li>Knowledge retrieval selects approved support guidance.</li><li>Response composition creates a customer-ready answer.</li><li>Persistence stores the governed outcome in PostgreSQL.</li></ul></article>
+      <article class="guide-card"><p class="eyebrow">Dashboard</p><h2>How to read the charts</h2><ul><li>Activity shows completed workflows over the last 14 days.</li><li>Priority mix highlights operational urgency in recent cases.</li><li>Classification mix shows which support topics are driving demand.</li></ul></article>
+      <article class="guide-card"><p class="eyebrow">Human control</p><h2>What to verify</h2><ul><li>Review source evidence before acting on the output.</li><li>Use workflow history and trace links for investigation.</li><li>Never paste credentials or sensitive customer data into a demonstration.</li></ul></article>
+      <article class="guide-card wide"><p class="eyebrow">Recommended client narrative</p><h2>Seven-minute demo script</h2><ol><li>Start with the dashboard to explain support volume and demand mix.</li><li>Enter a concise account-access ticket and select a premium customer tier.</li><li>Point out that premium tiers can raise priority without changing the evidence.</li><li>Run the workflow and explain the five specialized responsibilities.</li><li>Open the result to show citation-grounded guidance and traceability.</li><li>Use search and history to demonstrate operational handoff.</li></ol></article>
+    </section>
+  </main>
+  <script src="./guide.js"></script>
+</body>
+</html>

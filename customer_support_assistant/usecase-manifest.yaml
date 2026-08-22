@@ -23,6 +23,9 @@ documentation:
   - type: api
     title: Customer Support workflow dashboard
     url: http://127.0.0.1:8030/ui/
+  - type: other
+    title: Customer Support Assistant user guide
+    url: http://127.0.0.1:8030/ui/guide.html
   - type: developer_guide
     title: Customer Support Assistant README
     url: https://github.com/nagaraju-ssa/customer-support-assistant/blob/main/README.md

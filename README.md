@@ -72,6 +72,7 @@ uvicorn customer_support_assistant.api:create_app --factory --reload
 ### Local demo endpoints
 
 - Workflow Dashboard: `http://127.0.0.1:8030/ui/`
+- User Guide: `http://127.0.0.1:8030/ui/guide.html`
 - Swagger UI: `http://127.0.0.1:8030/docs`
 - Readiness: `http://127.0.0.1:8030/health/ready`
 - Admin Dashboard: `http://127.0.0.1:8010/admin/`
@@ -82,7 +83,8 @@ uvicorn customer_support_assistant.api:create_app --factory --reload
 
 The workflow dashboard supports form-based execution, PostgreSQL-backed
 history, search, pagination, detailed input/output review, 14-day trends,
-dark/light themes, Swagger access, and Langfuse navigation. The Admin
+compact priority and classification charts, dark/light themes, Swagger access,
+Langfuse navigation, and a separate client-demo guide. The Admin
 Dashboard's **Run Workflow** action opens this UI in a new tab. Admin receives
 sanitized workflow telemetry; ticket content, knowledge payloads, and
 recommended responses remain owned by this use case.

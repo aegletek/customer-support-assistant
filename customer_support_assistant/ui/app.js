@@ -10,7 +10,6 @@ const state = {
 
 const elements = {
   themeToggle: document.querySelector("#theme-toggle"),
-  themeLabel: document.querySelector("#theme-label"),
   themeIcon: document.querySelector(".theme-icon"),
   langfuseLink: document.querySelector("#langfuse-link"),
   metricTotal: document.querySelector("#metric-total"),
@@ -41,8 +40,10 @@ const elements = {
 
 function applyTheme(theme) {
   document.documentElement.dataset.theme = theme;
-  elements.themeLabel.textContent = theme === "dark" ? "Dark" : "Light";
-  elements.themeIcon.textContent = theme === "dark" ? "☾" : "☀";
+  elements.themeIcon.textContent = theme === "dark" ? "☀" : "☾";
+  const themeAction = theme === "dark" ? "Switch to light theme" : "Switch to dark theme";
+  elements.themeToggle.setAttribute("aria-label", themeAction);
+  elements.themeToggle.title = themeAction;
   localStorage.setItem("customer-support-theme", theme);
 }
 
@@ -107,6 +108,68 @@ function element(tag, className, text) {
   return node;
 }
 
+function groupValues(items, selector) {
+  const totals = new Map();
+  items.forEach((item) => {
+    const key = selector(item) || "unknown";
+    totals.set(key, (totals.get(key) || 0) + 1);
+  });
+  return [...totals.entries()].sort((left, right) => right[1] - left[1]);
+}
+
+function renderDonut(donutId, totalId, legendId, entries, colors, unit) {
+  const total = entries.reduce((sum, [, count]) => sum + count, 0);
+  let cursor = 0;
+  const stops = entries.map(([, count], index) => {
+    const start = cursor;
+    cursor += total ? (count / total) * 100 : 0;
+    return `${colors[index % colors.length]} ${start}% ${cursor}%`;
+  });
+  document.querySelector(`#${donutId}`).style.background = stops.length
+    ? `conic-gradient(${stops.join(", ")})`
+    : "conic-gradient(var(--border) 0 100%)";
+  document.querySelector(`#${totalId}`).textContent = String(total);
+  const legend = document.querySelector(`#${legendId}`);
+  legend.replaceChildren();
+  (entries.length ? entries : [[`No ${unit} yet`, 0]]).forEach(([name, count], index) => {
+    const item = document.createElement("li");
+    const marker = document.createElement("i");
+    marker.style.background = colors[index % colors.length];
+    item.append(marker, element("span", "", humanize(name)), element("strong", "", String(count)));
+    legend.append(item);
+  });
+}
+
+function renderBars(targetId, entries) {
+  const target = document.querySelector(`#${targetId}`);
+  target.replaceChildren();
+  const display = entries.length ? entries.slice(0, 5) : [["No completed cases", 0]];
+  const maximum = Math.max(1, ...display.map(([, count]) => count));
+  display.forEach(([name, count]) => {
+    const row = element("div", "insight-row");
+    const heading = document.createElement("div");
+    heading.append(element("span", "", humanize(name)), element("strong", "", String(count)));
+    const track = element("div", "insight-track");
+    const bar = document.createElement("i");
+    bar.style.width = `${count ? Math.max(8, (count / maximum) * 100) : 0}%`;
+    track.append(bar);
+    row.append(heading, track);
+    target.append(row);
+  });
+}
+
+function renderInsights() {
+  renderDonut(
+    "priority-donut",
+    "priority-total",
+    "priority-legend",
+    groupValues(state.cases, (item) => item.priority),
+    ["var(--danger)", "var(--amber)", "var(--primary)", "var(--green)"],
+    "cases",
+  );
+  renderBars("classification-bars", groupValues(state.cases, (item) => item.classification));
+}
+
 function renderMetrics() {
   elements.metricTotal.textContent = state.total.toLocaleString();
   elements.metricWeek.textContent = state.trends
@@ -121,6 +184,7 @@ function renderMetrics() {
   elements.metricLatest.textContent = latest
     ? formatDate(latest.created_at, { short: true })
     : "PostgreSQL persistence";
+  renderInsights();
 }
 
 function renderTrendChart() {

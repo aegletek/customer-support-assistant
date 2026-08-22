@@ -6,27 +6,47 @@
     <meta name="description" content="Customer Support Assistant workflow dashboard" />
     <title>Customer Support Assistant</title>
     <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./experience.css" />
   </head>
   <body>
-    <div class="app-shell">
-      <header class="topbar">
+    <div class="dashboard-shell">
+      <aside class="sidebar">
         <a class="brand" href="./" aria-label="Customer Support Assistant home">
           <span class="brand-mark" aria-hidden="true">
             <svg viewBox="0 0 32 32"><path d="M16 3a11 11 0 0 0-11 11v7a4 4 0 0 0 4 4h2v-9H7v-2a9 9 0 0 1 18 0v2h-4v9h3a5 5 0 0 1-5 4h-3v-2h3a3 3 0 0 0 3-2h1a4 4 0 0 0 4-4v-7A11 11 0 0 0 16 3Z"/></svg>
           </span>
-          <span><strong>Customer Support Assistant</strong><small>AvantiQ-powered use case</small></span>
+          <span><strong>Customer Support</strong><small>AvantiQ-powered use case</small></span>
         </a>
+        <nav class="sidebar-nav" aria-label="Dashboard sections">
+          <a class="active" href="#dashboard"><span aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span> Dashboard</a>
+          <a href="#analytics"><span aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 19V5"/><path d="M4 19h16"/><path d="m7 15 4-4 3 2 5-6"/></svg></span> Analytics</a>
+          <a href="#workflow"><span aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="2"/><circle cx="19" cy="6" r="2"/><circle cx="19" cy="18" r="2"/><path d="M7 12h4a4 4 0 0 0 4-4V6"/><path d="M11 12a4 4 0 0 1 4 4v2"/></svg></span> Run workflow</a>
+          <a href="#history"><span aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/><path d="M12 7v5l3 2"/></svg></span> Run history</a>
+        </nav>
+        <div class="sidebar-footer">
+          <a href="./guide.html" target="_blank" rel="noreferrer noopener">User Guide <span>&nearr;</span></a>
+          <small>Powered by AvantiQ</small>
+        </div>
+      </aside>
+
+      <div class="app-shell">
+      <header class="topbar">
+        <div class="breadcrumb"><span>Customer Support Assistant</span><b>/</b><strong>Dashboard</strong></div>
         <div class="header-actions">
+          <a class="header-link" href="./guide.html" target="_blank" rel="noreferrer noopener">User Guide <span>&nearr;</span></a>
           <a class="header-link" href="/docs" target="_blank" rel="noreferrer noopener">API Docs <span>↗</span></a>
           <a class="header-link trace-link" id="langfuse-link" href="#" target="_blank" rel="noreferrer noopener" hidden>Workflow Traces <span>↗</span></a>
           <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch color theme">
-            <span class="theme-icon" aria-hidden="true">☾</span>
-            <span id="theme-label">Dark</span>
+            <span class="theme-icon" aria-hidden="true">☀</span>
           </button>
         </div>
       </header>
 
-      <main>
+      <main id="dashboard">
+        <section class="page-heading">
+          <div><h1>Dashboard</h1><p>Monitor support demand, run the agent workflow, and review completed outcomes.</p></div>
+          <span class="live-status"><i></i> Workflow service online</span>
+        </section>
         <section class="metrics-grid" aria-label="Workflow summary">
           <article class="metric-card">
             <span class="metric-icon purple">◎</span>
@@ -46,17 +66,21 @@
           </article>
         </section>
 
-        <section class="workspace-grid">
+        <section class="insight-grid" id="analytics" aria-label="Support operations insights">
           <article class="panel trend-panel">
             <div class="panel-heading">
               <div><p class="eyebrow">Workflow trends</p><h2>Completed support cases</h2></div>
               <span class="period-chip">Last 14 days</span>
             </div>
             <div id="trend-chart" class="trend-chart" role="img" aria-label="Completed support workflows over the last 14 days"></div>
-            <div class="chart-footer"><span><i></i> Completed cases</span><small>Daily totals from persisted cases</small></div>
+            <div class="chart-footer"><span><i></i> Completed cases</span><small>Daily totals</small></div>
           </article>
+          <article class="panel insight-panel"><div class="panel-heading"><div><p class="eyebrow">Operational urgency</p><h2>Priority mix</h2></div><span class="period-chip">Current view</span></div><div class="insight-body"><div class="donut-wrap"><div class="insight-donut" id="priority-donut"></div><span class="insight-donut-label"><strong id="priority-total">0</strong><small>cases</small></span></div><ul class="insight-legend" id="priority-legend"></ul></div></article>
+          <article class="panel insight-panel"><div class="panel-heading"><div><p class="eyebrow">Demand intelligence</p><h2>Top classifications</h2></div><span class="period-chip">Current view</span></div><div class="insight-bars" id="classification-bars"></div></article>
+        </section>
 
-          <aside class="panel run-panel">
+        <section class="operations-grid">
+          <aside class="panel run-panel" id="workflow">
             <div class="panel-heading">
               <div><p class="eyebrow">New support request</p><h2>Run workflow</h2></div>
               <span class="agent-badge">5 agents</span>
@@ -86,9 +110,8 @@
               <p class="form-status" id="form-status" aria-live="polite">The completed case will appear first in run history.</p>
             </form>
           </aside>
-        </section>
 
-        <section class="panel history-panel">
+        <section class="panel history-panel" id="history">
           <div class="panel-heading history-heading">
             <div><p class="eyebrow">Run history</p><h2>Previous workflow details</h2></div>
             <div class="history-controls">
@@ -114,7 +137,9 @@
             <div><button id="previous-page" type="button">← Previous</button><button id="next-page" type="button">Next →</button></div>
           </div>
         </section>
+        </section>
       </main>
+      </div>
     </div>
 
     <dialog id="case-dialog">

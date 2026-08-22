@@ -193,6 +193,8 @@ def test_api_health_triage_and_case_retrieval():
         dashboard = client.get("/ui/")
         dashboard_javascript = client.get("/ui/app.js")
         dashboard_styles = client.get("/ui/styles.css")
+        experience_styles = client.get("/ui/experience.css")
+        user_guide = client.get("/ui/guide.html")
         missing = client.get("/cases/00000000-0000-0000-0000-000000000000")
         legacy = client.post("/execute", json={"task": "legacy"})
         assert onboarding.started is True
@@ -238,11 +240,18 @@ def test_api_health_triage_and_case_retrieval():
     assert dashboard.status_code == 200
     assert "AvantiQ-powered use case" in dashboard.text
     assert 'id="history-search"' in dashboard.text
+    assert "Start guided demo" not in dashboard.text
+    assert 'class="insight-grid"' in dashboard.text
+    assert 'href="./guide.html"' in dashboard.text
     assert dashboard_javascript.status_code == 200
     assert 'api("/support/triage"' in dashboard_javascript.text
     assert "encodeURIComponent(state.search)" in dashboard_javascript.text
     assert dashboard_styles.status_code == 200
     assert '[data-theme="light"]' in dashboard_styles.text
+    assert experience_styles.status_code == 200
+    assert ".insight-grid" in experience_styles.text
+    assert user_guide.status_code == 200
+    assert "Seven-minute demo script" in user_guide.text
     assert missing.status_code == 404
     assert legacy.status_code == 404
 
