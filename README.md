@@ -28,6 +28,9 @@ deployment, API version, and temperature, and configure this use case's own
 Langfuse public key, secret key, base URL, and project URL. Never commit `.env`
 or credentials, and do not reuse another use case's Langfuse project keys.
 Leave `LIVE_LLM_ENABLED=false` for deterministic execution.
+`LANGFUSE_CAPTURE_LLM_IO` defaults to `false`; enable it only when complete
+prompts and responses are approved for the dedicated project's access and
+retention policy.
 
 The example also defines bounded node and LLM retries, exponential backoff, a
 whole-workflow timeout, per-process workflow concurrency, LLM rate limiting,

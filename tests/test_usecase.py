@@ -238,7 +238,8 @@ def test_api_health_triage_and_case_retrieval():
     assert trends.status_code == 200
     assert sum(point["runs"] for point in trends.json()) == 1
     assert dashboard.status_code == 200
-    assert "AvantiQ-powered use case" in dashboard.text
+    assert "<strong>Customer Support Assistant</strong>" in dashboard.text
+    assert "<small>Powered by AvantiQ</small>" in dashboard.text
     assert 'id="history-search"' in dashboard.text
     assert "Start guided demo" not in dashboard.text
     assert 'class="insight-grid"' in dashboard.text
