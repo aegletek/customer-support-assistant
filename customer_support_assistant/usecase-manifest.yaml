@@ -29,6 +29,9 @@ documentation:
   - type: developer_guide
     title: Customer Support Assistant README
     url: https://github.com/nagaraju-ssa/customer-support-assistant/blob/main/README.md
+  - type: runbook
+    title: Customer Support Assistant operational handoff
+    url: https://github.com/nagaraju-ssa/customer-support-assistant/blob/main/HANDOFF.md
   - type: repository
     title: Source repository
     url: https://github.com/nagaraju-ssa/customer-support-assistant

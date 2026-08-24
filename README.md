@@ -87,7 +87,9 @@ uvicorn customer_support_assistant.api:create_app --factory --reload
 The workflow dashboard supports form-based execution, PostgreSQL-backed
 history, search, pagination, detailed input/output review, 14-day trends,
 compact priority and classification charts, dark/light themes, Swagger access,
-Langfuse navigation, and a separate client-demo guide. The Admin
+Langfuse navigation, and a separate client-demo guide. The User Guide now
+documents the business problem, AvantiQ solution, business value, intended
+users, inputs/outputs, integrations, human controls, and demo narrative. The Admin
 Dashboard's **Run Workflow** action opens this UI in a new tab. Admin receives
 sanitized workflow telemetry; ticket content, knowledge payloads, and
 recommended responses remain owned by this use case.
@@ -148,12 +150,13 @@ Admin URLs or credentials into the image.
 
 ## Azure DEV
 
-The current immutable Azure DEV image is built from commit `91998db` and runs
-in AKS behind Microsoft Entra perimeter SSO:
+Azure DEV runs immutable commit-tagged images in AKS behind Microsoft Entra
+perimeter SSO:
 
 - Workflow Dashboard:
-  `https://support.4.187.235.151.sslip.io/ui/`
-- Swagger: `https://support.4.187.235.151.sslip.io/docs`
+  `https://support.20.235.211.237.sslip.io/ui/`
+- User Guide: `https://support.20.235.211.237.sslip.io/ui/guide.html`
+- Swagger: `https://support.20.235.211.237.sslip.io/docs`
 
 The deployment has one economical DEV replica, reads secrets through the
 platform Key Vault/CSI configuration, persists business records in the
@@ -195,3 +198,7 @@ systems one boundary at a time, and preserve the public AvantiQ Core contracts.
 The complete training path, checklist, architecture guidance, security rules,
 and production-readiness criteria are maintained in the AvantiQ Core repository
 under `docs/usecase-development/`.
+
+For implementation ownership, AvantiQ Core integration details, configuration,
+local and Azure operations, observability, rollback, and transfer checks, see
+[HANDOFF.md](HANDOFF.md).

@@ -252,6 +252,9 @@ def test_api_health_triage_and_case_retrieval():
     assert experience_styles.status_code == 200
     assert ".insight-grid" in experience_styles.text
     assert user_guide.status_code == 200
+    assert "Business problem" in user_guide.text
+    assert "AvantiQ solution" in user_guide.text
+    assert "Inputs, outputs, and system boundaries" in user_guide.text
     assert "Seven-minute demo script" in user_guide.text
     assert missing.status_code == 404
     assert legacy.status_code == 404
