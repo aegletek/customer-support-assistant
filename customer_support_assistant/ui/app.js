@@ -20,6 +20,7 @@ const elements = {
   metricLatest: document.querySelector("#metric-latest"),
   trendChart: document.querySelector("#trend-chart"),
   form: document.querySelector("#support-form"),
+  ticketId: document.querySelector('input[name="ticket_id"]'),
   runButton: document.querySelector("#run-button"),
   runLabel: document.querySelector("#run-label"),
   formStatus: document.querySelector("#form-status"),
@@ -51,6 +52,15 @@ function initializeTheme() {
   const saved = localStorage.getItem("customer-support-theme");
   const preferred = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
   applyTheme(saved === "light" || saved === "dark" ? saved : preferred);
+}
+
+function generateTicketId() {
+  const uniquePart = crypto.randomUUID().replaceAll("-", "").slice(0, 8).toUpperCase();
+  return `CS-${uniquePart}`;
+}
+
+function resetTicketId() {
+  elements.ticketId.value = generateTicketId();
 }
 
 async function api(path, options = {}) {
@@ -353,6 +363,7 @@ async function runSupport(event) {
     elements.formStatus.className = "form-status success";
     elements.formStatus.textContent = "Workflow completed. The new case is first in run history.";
     showToast(`${payload.ticket_id} completed successfully.`);
+    resetTicketId();
   } catch (error) {
     elements.formStatus.className = "form-status error";
     elements.formStatus.textContent = error.message;
@@ -396,5 +407,6 @@ elements.dialog.addEventListener("click", (event) => {
 });
 
 initializeTheme();
+resetTicketId();
 loadUiConfig();
 loadDashboard();

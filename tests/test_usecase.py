@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 from decimal import Decimal
+import re
 
 from fastapi.testclient import TestClient
 import pytest
@@ -16,6 +17,7 @@ from customer_support_assistant.config import UseCaseSettings
 from customer_support_assistant.domain import (
     SupportTicket,
     classify_ticket,
+    generate_ticket_id,
     guardrail_safe_uuid,
 )
 from customer_support_assistant.tools import (
@@ -246,6 +248,8 @@ def test_api_health_triage_and_case_retrieval():
     assert 'href="./guide.html"' in dashboard.text
     assert dashboard_javascript.status_code == 200
     assert 'api("/support/triage"' in dashboard_javascript.text
+    assert 'name="ticket_id" readonly' in dashboard.text
+    assert "function generateTicketId()" in dashboard_javascript.text
     assert "encodeURIComponent(state.search)" in dashboard_javascript.text
     assert dashboard_styles.status_code == 200
     assert '[data-theme="light"]' in dashboard_styles.text
@@ -270,6 +274,24 @@ def test_api_rejects_invalid_or_unknown_ticket_fields() -> None:
 
     assert empty_message.status_code == 422
     assert unknown_field.status_code == 422
+
+
+def test_ticket_id_generation_and_api_fallback() -> None:
+    first = generate_ticket_id()
+    second = generate_ticket_id()
+
+    assert re.fullmatch(r"CS-[0-9A-F]{8}", first)
+    assert first != second
+
+    with TestClient(create_app(build_test_application(), onboarding=FakeOnboarding())) as client:
+        response = client.post("/support/triage", json={
+            "subject": TICKET["subject"],
+            "message": TICKET["message"],
+            "customer_tier": TICKET["customer_tier"],
+        })
+
+    assert response.status_code == 200
+    assert re.fullmatch(r"CS-[0-9A-F]{8}", response.json()["ticket_id"])
 
 
 def test_history_api_accepts_legacy_demo_identifiers_and_structured_citations() -> None:

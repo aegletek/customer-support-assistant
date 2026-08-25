@@ -94,6 +94,12 @@ Dashboard's **Run Workflow** action opens this UI in a new tab. Admin receives
 sanitized workflow telemetry; ticket content, knowledge payloads, and
 recommended responses remain owned by this use case.
 
+The dashboard generates a read-only ticket ID in the form `CS-XXXXXXXX`, where
+the suffix is eight uppercase alphanumeric characters. A fresh ID is prepared
+after every successful run. API callers may omit `ticket_id`; the server then
+generates the same format. Existing callers can still supply their own non-empty
+identifier for backward compatibility.
+
 The approved deterministic API contract is:
 
 - `GET /health/`
@@ -109,7 +115,6 @@ Example request:
 
 ```json
 {
-  "ticket_id": "DEMO-1001",
   "subject": "Unable to access monthly statement",
   "message": "My July statement does not appear after I sign in.",
   "customer_tier": "gold",
@@ -118,7 +123,8 @@ Example request:
 }
 ```
 
-The response contains the case ID, classification, priority, approved knowledge
+The response contains the generated ticket ID, case ID, classification,
+priority, approved knowledge
 citations, recommended response, workflow/request identifiers, and creation
 time. It does not expose prompts or internal tool payloads.
 

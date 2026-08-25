@@ -1,6 +1,6 @@
 # Customer Support Assistant handoff
 
-Last reviewed: 24 August 2026
+Last reviewed: 25 August 2026
 
 ## Purpose and business outcome
 
@@ -25,6 +25,8 @@ automation boundaries.
   `LIVE_LLM_ENABLED=true`
 - Tracing: a dedicated Customer Support Langfuse project
 - Admin integration: registration, heartbeat, and sanitized workflow telemetry
+- Ticket identity: UI and API fallback generate `CS-XXXXXXXX` identifiers;
+  callers may still provide an existing identifier for compatibility
 - Local dashboard: <http://127.0.0.1:8030/ui/>
 - Local User Guide: <http://127.0.0.1:8030/ui/guide.html>
 - Azure dashboard: <https://support.20.235.211.237.sslip.io/ui/>
@@ -53,8 +55,9 @@ integration contracts.
 
 ## Data flow and boundaries
 
-1. FastAPI validates the ticket ID, subject, message, customer tier, and caller
-   context.
+1. The dashboard prepares a read-only `CS-XXXXXXXX` ticket ID. FastAPI validates
+   supplied identifiers or generates the same format when an API caller omits
+   it, then validates the subject, message, customer tier, and caller context.
 2. Intake normalizes the request.
 3. Classification applies deterministic category and priority policy.
 4. The knowledge tool retrieves approved, versioned guidance.
@@ -176,6 +179,8 @@ and persistence.
 - Record the deployed immutable image tag.
 - Verify local and Azure User Guide links.
 - Verify one deterministic workflow and its persisted result.
+- Confirm a dashboard run displays and persists a unique `CS-XXXXXXXX` ticket
+  ID and a request without `ticket_id` receives a server-generated ID.
 - Confirm Admin health and public links use the intended environment.
 - Confirm secrets remain only in `.env`/Key Vault and each Langfuse project is
   use-case specific.

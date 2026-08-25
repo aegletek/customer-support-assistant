@@ -15,14 +15,14 @@ from avantiq_core import WorkflowRequest
 from avantiq_core.admin import AdminOnboarding, AdminWorkflowTelemetry, CostSource
 
 from .composition import UseCaseApplication, WORKFLOW_NAME, build_application
-from .domain import guardrail_safe_uuid
+from .domain import generate_ticket_id, guardrail_safe_uuid
 from .onboarding import build_admin_onboarding
 
 
 class SupportTriageRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    ticket_id: str = Field(min_length=1, max_length=64)
+    ticket_id: str | None = Field(default=None, min_length=1, max_length=64)
     subject: str = Field(min_length=1, max_length=200)
     message: str = Field(min_length=1, max_length=5000)
     customer_tier: Literal["standard", "silver", "gold", "platinum"] = "standard"
@@ -113,6 +113,8 @@ def create_app(
 
     @app.post("/support/triage", response_model=SupportCaseResponse)
     async def triage(request: SupportTriageRequest):
+        provided_ticket_id = request.ticket_id.strip() if request.ticket_id else ""
+        ticket_id = provided_ticket_id or generate_ticket_id()
         workflow_id = guardrail_safe_uuid()
         request_id = guardrail_safe_uuid()
         correlation_id = guardrail_safe_uuid()
@@ -126,12 +128,12 @@ def create_app(
         started_at = time.perf_counter()
         response = await application.runtime.execute(WorkflowRequest(
             workflow=WORKFLOW_NAME,
-            input=json.dumps(request.model_dump(include={
-                "ticket_id",
-                "subject",
-                "message",
-                "customer_tier",
-            })),
+            input=json.dumps({
+                "ticket_id": ticket_id,
+                "subject": request.subject,
+                "message": request.message,
+                "customer_tier": request.customer_tier,
+            }),
             user_id=request.user_id,
             conversation_id=request.conversation_id,
             workflow_id=workflow_id,

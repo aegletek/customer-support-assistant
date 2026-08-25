@@ -87,7 +87,7 @@
             </div>
             <form id="support-form">
               <div class="form-row">
-                <label><span>Ticket ID</span><input name="ticket_id" required maxlength="64" placeholder="e.g. DEMO-2001" /></label>
+                <label><span>Ticket ID</span><input class="generated-ticket-id" name="ticket_id" readonly aria-describedby="ticket-id-help" /></label>
                 <label>
                   <span>Customer tier</span>
                   <select name="customer_tier">
@@ -98,6 +98,7 @@
                   </select>
                 </label>
               </div>
+              <p class="field-help" id="ticket-id-help">Generated automatically in the format CS-XXXXXXXX.</p>
               <label><span>Subject</span><input name="subject" required maxlength="200" placeholder="e.g. Unable to access monthly statement" /></label>
               <label><span>Customer message</span><textarea name="message" required maxlength="5000" rows="3" placeholder="Describe the customer issue"></textarea></label>
               <div class="form-row compact-row">
