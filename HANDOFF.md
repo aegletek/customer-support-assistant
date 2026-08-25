@@ -44,7 +44,7 @@ does not copy or fork framework code.
 | `PromptTemplate` | Defines reviewable prompt contracts, including the grounded response-composition prompt. |
 | Provider abstraction | Invokes the configured Azure OpenAI deployment without embedding provider clients in business agents. |
 | Runtime controls | Applies configured retry, timeout, concurrency, rate-limit, and cache behavior. |
-| Observability | Correlates workflow IDs, request IDs, Langfuse traces, token usage, cost, and sanitized Admin events. |
+| Observability | Correlates workflow IDs, request IDs, Langfuse traces, token usage, provider-reported or versioned estimated cost, and sanitized Admin events. |
 | Admin client | Registers the manifest, advertises the public dashboard URL, sends heartbeats, and fails open if Admin is unavailable. |
 | Shared contracts | Keeps workflow requests, responses, agent profiles, tools, and manifest data compatible with the platform. |
 
@@ -169,7 +169,9 @@ CI.
 ## Observability and investigation
 
 - Use the application history for business-result review.
-- Use Admin workflow runs for status, duration, token/cost, and correlation IDs.
+- Use Admin workflow runs for status, duration, token/cost provenance, and
+  correlation IDs. Azure estimates are marked `≈`; unavailable historical
+  values are excluded from spend totals.
 - Use the dedicated Langfuse project for approved trace inspection.
 - Check pod logs for provider, database, registration, or readiness errors.
 - Keep `LANGFUSE_CAPTURE_LLM_IO=false` unless full prompt/response retention is

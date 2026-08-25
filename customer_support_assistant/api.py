@@ -160,11 +160,8 @@ def create_app(
             cached_input_tokens=response.cached_input_tokens,
             cost_amount=response.cost_amount,
             cost_currency=response.cost_currency,
-            cost_source=(
-                CostSource.PROVIDER_REPORTED
-                if response.cost_amount is not None
-                else CostSource.UNAVAILABLE
-            ),
+            cost_source=CostSource(response.cost_source),
+            pricing_version=response.pricing_version,
             error_code=None if response.success else "workflow_failed",
         )
         if not response.success:

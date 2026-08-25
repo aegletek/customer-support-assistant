@@ -132,8 +132,10 @@ time. It does not expose prompts or internal tool payloads.
 
 When live mode is enabled, one LLM call composes `recommended_response` from
 the already classified ticket and approved knowledge result. AvantiQ Core
-captures provider-reported token usage and cost when available and correlates
-the Langfuse trace with the Admin workflow run.
+captures provider token usage, preserves provider-reported cost when available,
+and otherwise produces a versioned Azure OpenAI estimate when the platform
+pricing variables are configured. It correlates the Langfuse trace with the
+Admin workflow run.
 
 ## Build the demo image
 
