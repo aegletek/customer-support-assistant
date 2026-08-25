@@ -84,6 +84,17 @@ modify accounts, or execute service actions.
 | `GET /api/ui-config` | Return safe browser configuration |
 | `GET /ui/` | Workflow dashboard |
 | `GET /ui/guide.html` | Client-facing User Guide |
+| `GET /documentation/readme` | Rendered repository README |
+| `GET /documentation/handoff` | Rendered operational handoff |
+
+## Documentation ownership
+
+`README.md`, `HANDOFF.md`, and the packaged User Guide are version-controlled
+source files. The service renders the two allowlisted Markdown files directly;
+the Admin catalog retains only their URLs and contains no document snapshots.
+Edit the source, run the normal tests, and rebuild/redeploy this service image.
+This presentation path does not read or write support workflow records and is
+independent of ticket generation, agents, PostgreSQL persistence, and telemetry.
 
 ## Configuration ownership
 

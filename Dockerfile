@@ -6,7 +6,7 @@ FROM ${AVANTIQ_CORE_IMAGE} AS runtime
 USER root
 WORKDIR /app
 
-COPY pyproject.toml README.md ./
+COPY pyproject.toml README.md HANDOFF.md ./
 COPY customer_support_assistant ./customer_support_assistant
 
 RUN pip install --no-cache-dir . \

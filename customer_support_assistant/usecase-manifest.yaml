@@ -28,10 +28,10 @@ documentation:
     url: http://127.0.0.1:8030/ui/guide.html
   - type: developer_guide
     title: Customer Support Assistant README
-    url: https://github.com/nagaraju-ssa/customer-support-assistant/blob/main/README.md
+    url: http://127.0.0.1:8030/documentation/readme
   - type: runbook
     title: Customer Support Assistant operational handoff
-    url: https://github.com/nagaraju-ssa/customer-support-assistant/blob/main/HANDOFF.md
+    url: http://127.0.0.1:8030/documentation/handoff
   - type: repository
     title: Source repository
     url: https://github.com/nagaraju-ssa/customer-support-assistant

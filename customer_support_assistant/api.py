@@ -13,6 +13,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from avantiq_core import WorkflowRequest
 from avantiq_core.admin import AdminOnboarding, AdminWorkflowTelemetry, CostSource
+from avantiq_core.api.documentation import mount_documentation_pages
 
 from .composition import UseCaseApplication, WORKFLOW_NAME, build_application
 from .domain import generate_ticket_id, guardrail_safe_uuid
@@ -88,6 +89,11 @@ def create_app(
         version="0.1.0",
         lifespan=lifespan,
     )
+    documentation_root = Path.cwd()
+    mount_documentation_pages(app, {
+        "readme": ("Customer Support Assistant README", documentation_root / "README.md"),
+        "handoff": ("Customer Support Assistant Operational Handoff", documentation_root / "HANDOFF.md"),
+    })
     ui_directory = Path(__file__).resolve().parent / "ui"
     app.mount("/ui", StaticFiles(directory=ui_directory, html=True), name="ui")
 

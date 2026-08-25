@@ -76,6 +76,8 @@ uvicorn customer_support_assistant.api:create_app --factory --reload
 
 - Workflow Dashboard: `http://127.0.0.1:8030/ui/`
 - User Guide: `http://127.0.0.1:8030/ui/guide.html`
+- Repository documentation: `http://127.0.0.1:8030/documentation/readme`
+- Operational handoff: `http://127.0.0.1:8030/documentation/handoff`
 - Swagger UI: `http://127.0.0.1:8030/docs`
 - Readiness: `http://127.0.0.1:8030/health/ready`
 - Admin Dashboard: `http://127.0.0.1:8010/admin/`
@@ -162,6 +164,14 @@ perimeter SSO:
 - Workflow Dashboard:
   `https://support.20.235.211.237.sslip.io/ui/`
 - User Guide: `https://support.20.235.211.237.sslip.io/ui/guide.html`
+- Repository documentation: `https://support.20.235.211.237.sslip.io/documentation/readme`
+- Operational handoff: `https://support.20.235.211.237.sslip.io/documentation/handoff`
+
+The Markdown files in this repository are authoritative. The API renders only
+the allowlisted `README.md` and `HANDOFF.md` files at the routes above; Admin
+stores their URLs and never copies their content into PostgreSQL. Publish a
+documentation change through the normal tested image rebuild and deployment.
+No business-data migration or document synchronization step is required.
 - Swagger: `https://support.20.235.211.237.sslip.io/docs`
 
 The deployment has one economical DEV replica, reads secrets through the

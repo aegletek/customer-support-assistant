@@ -197,6 +197,8 @@ def test_api_health_triage_and_case_retrieval():
         dashboard_styles = client.get("/ui/styles.css")
         experience_styles = client.get("/ui/experience.css")
         user_guide = client.get("/ui/guide.html")
+        readme = client.get("/documentation/readme")
+        handoff = client.get("/documentation/handoff")
         missing = client.get("/cases/00000000-0000-0000-0000-000000000000")
         legacy = client.post("/execute", json={"task": "legacy"})
         assert onboarding.started is True
@@ -220,6 +222,10 @@ def test_api_health_triage_and_case_retrieval():
         "langfuse_project_url": "https://us.cloud.langfuse.com/project/customer-test"
     }
     assert "key" not in " ".join(ui_config.json()).lower()
+    assert readme.status_code == 200
+    assert "Customer Support Assistant" in readme.text
+    assert handoff.status_code == 200
+    assert "Powered by AvantiQ" in handoff.text
     assert response.status_code == 200
     assert payload["ticket_id"] == "DEMO-1001"
     assert payload["subject"] == TICKET["subject"]
