@@ -164,6 +164,20 @@ CI.
 - Keep `LANGFUSE_CAPTURE_LLM_IO=false` unless full prompt/response retention is
   explicitly approved.
 
+## Current release evidence
+
+The 25 August 2026 automatic-ticket-ID release is synchronized to Azure DevOps
+and GitHub at application commit `b190254`. Azure Container Registry run
+`cu14` published immutable image
+`customer-support-assistant:b19025405d7c58c1f3e43e1f161017e5aff1c46b-core-96c9a8d`
+with digest
+`sha256:fcf435f5d465fa2b9d07bd44741d67f3a4bd981285477ced6a61136ca3b5dd00`.
+The AKS deployment reached `1/1 Ready` with zero restarts. In-pod checks
+confirmed ready health, the read-only ticket field, and a generated
+`CS-XXXXXXXX` value. The public dashboard and User Guide retained the expected
+Entra/OAuth2 HTTP 302 boundary. All 18 deterministic tests and compile checks
+passed before release.
+
 ## Rollback
 
 Set the AKS deployment back to the previous immutable ACR tag and wait for the
