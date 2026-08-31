@@ -212,3 +212,15 @@ and persistence.
 - Confirm secrets remain only in `.env`/Key Vault and each Langfuse project is
   use-case specific.
 - Record known provider, database, or operational limitations before transfer.
+
+## Multi-model operations
+
+The live route is `azure:gpt-5.4-mini` with
+`openrouter:openai/gpt-4.1-mini` as the governed secondary route. Configure
+`LLM_FALLBACK_PROVIDERS`, provider/model maps, allowlists, capabilities, and
+`LLM_PROVIDER_TIMEOUT_SECONDS` from `.env.example`. Keep both provider keys
+outside Git; Azure AKS reads them from Key Vault/CSI. Verify fallback with a
+controlled non-production primary failure and confirm that telemetry contains
+only the route, fallback flag, and sanitized exception type. If both routes are
+unavailable, set `LIVE_LLM_ENABLED=false` to retain the deterministic workflow
+while provider service is restored.

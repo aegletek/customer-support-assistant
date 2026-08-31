@@ -220,3 +220,18 @@ under `docs/usecase-development/`.
 For implementation ownership, AvantiQ Core integration details, configuration,
 local and Azure operations, observability, rollback, and transfer checks, see
 [HANDOFF.md](HANDOFF.md).
+
+## Governed model routing
+
+Live response composition uses AvantiQ Core's provider-neutral model gateway.
+Azure OpenAI `gpt-5.4-mini` is primary; OpenRouter
+`openai/gpt-4.1-mini` is the approved secondary route. The gateway applies
+provider/model allowlists and an independent timeout before failover. Agents do
+not contain provider SDK code, and deterministic mode remains available through
+`LIVE_LLM_ENABLED=false`.
+
+Copy the non-secret route controls from `.env.example`. Put Azure and
+OpenRouter credentials only in the ignored `.env` locally and in Key Vault/CSI
+for AKS. A fallback changes only model execution; ticket generation,
+classification, approved knowledge retrieval, persistence, and human review
+contracts are unchanged.
