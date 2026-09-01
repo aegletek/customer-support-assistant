@@ -235,3 +235,13 @@ OpenRouter credentials only in the ignored `.env` locally and in Key Vault/CSI
 for AKS. A fallback changes only model execution; ticket generation,
 classification, approved knowledge retrieval, persistence, and human review
 contracts are unchanged.
+
+## Safety and model-cost telemetry
+
+The shared Core boundary supports disabled-by-default Azure AI Content Safety
+for text moderation and Prompt Shields. Enable it only after provisioning an
+approved resource and placing its key outside Git. Each newly completed live
+workflow publishes sanitized call-level provider/model/route, token, fallback,
+currency, cost-source, and pricing-version data to Admin. Ticket text and model
+responses are not copied into Admin telemetry. Historical runs remain valid but
+do not receive a reconstructed model-cost split.

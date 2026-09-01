@@ -163,6 +163,15 @@ def create_app(
             cost_source=CostSource(response.cost_source),
             pricing_version=response.pricing_version,
             error_code=None if response.success else "workflow_failed",
+            model_routes=response.model_routes,
+            fallback_used=response.fallback_used,
+            fallback_reason=response.fallback_reason,
+            safety_checked_count=response.safety_checked_count,
+            safety_blocked_count=response.safety_blocked_count,
+            safety_error_count=response.safety_error_count,
+            safety_max_severity=response.safety_max_severity,
+            prompt_attack_detected=response.prompt_attack_detected,
+            model_usage=response.model_usage,
         )
         if not response.success:
             raise HTTPException(status_code=502, detail="Support workflow failed")

@@ -224,3 +224,12 @@ controlled non-production primary failure and confirm that telemetry contains
 only the route, fallback flag, and sanitized exception type. If both routes are
 unavailable, set `LIVE_LLM_ENABLED=false` to retain the deterministic workflow
 while provider service is restored.
+
+## Governance telemetry release (1 September 2026)
+
+The API forwards Core's sanitized call-level `model_usage` with terminal
+workflow telemetry. Admin can now report Customer Support provider/model cost,
+tokens, route, and fallback counts without retaining ticket content or generated
+responses. Azure AI Content Safety configuration is present in `.env.example`
+but remains disabled until a dedicated approved resource and key are supplied.
+Local regression remains 18 passing tests.
