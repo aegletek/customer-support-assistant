@@ -1,4 +1,4 @@
-"""Initialize a repository created from the AvantiQ use-case template."""
+"""Initialize a repository created from the Orbit use-case template."""
 
 from __future__ import annotations
 
@@ -46,10 +46,10 @@ def initialize(project: str, package: str, display: str, description: str) -> No
         raise RuntimeError("this repository has already been initialized")
 
     replacements = {
-        "avantiq-usecase": project,
-        "avantiq_usecase": package,
-        "AvantiQ Use Case": display,
-        "Independent business use case powered by AvantiQ Core": description,
+        "orbit-usecase": project,
+        "orbit_usecase": package,
+        "Orbit Use Case": display,
+        "Independent business use case powered by Orbit Core": description,
         "usecase_workflow": f"{package}_workflow",
     }
     for path in editable_files():
@@ -60,7 +60,7 @@ def initialize(project: str, package: str, display: str, description: str) -> No
         if updated != content:
             path.write_text(updated, encoding="utf-8")
 
-    source_package = ROOT / "avantiq_usecase"
+    source_package = ROOT / "orbit_usecase"
     target_package = ROOT / package
     if target_package.exists():
         raise RuntimeError(f"target package already exists: {target_package}")
@@ -79,7 +79,7 @@ def main() -> None:
     project = kebab_name(args.project_name)
     package = package_name(args.package_name or project)
     display = args.display_name or project.replace("-", " ").title()
-    description = args.description or f"{display} powered by AvantiQ Core"
+    description = args.description or f"{display} powered by Orbit Core"
     initialize(project, package, display, description)
     print(f"Initialized {display} ({project}, package {package}).")
 

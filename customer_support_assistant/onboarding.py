@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from avantiq_core.admin import (
+from orbit_core.admin import (
     AdminClient,
     AdminClientSettings,
     AdminOnboarding,

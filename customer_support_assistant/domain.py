@@ -14,7 +14,7 @@ def guardrail_safe_uuid() -> str:
 
 
 def generate_ticket_id() -> str:
-    """Return a readable, unique AvantiQ customer-support ticket ID."""
+    """Return a readable, unique Orbit customer-support ticket ID."""
 
     unique_part = uuid4().hex[:8].upper()
     return f"CS-{unique_part}"

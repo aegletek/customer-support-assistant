@@ -9,8 +9,8 @@ permissions:
   contents: read
 
 env:
-  AVANTIQ_CORE_SOURCE: ${{ vars.AVANTIQ_CORE_SOURCE || 'github' }}
-  PIP_EXTRA_INDEX_URL: ${{ secrets.AVANTIQ_PYPI_INDEX_URL }}
+  ORBIT_CORE_SOURCE: ${{ vars.ORBIT_CORE_SOURCE || 'github' }}
+  PIP_EXTRA_INDEX_URL: ${{ secrets.ORBIT_PYPI_INDEX_URL }}
 
 jobs:
   test:
@@ -23,14 +23,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Check out private AvantiQ Core
-        if: env.AVANTIQ_CORE_SOURCE == 'github'
+      - name: Check out private Orbit Core
+        if: env.ORBIT_CORE_SOURCE == 'github'
         uses: actions/checkout@v4
         with:
-          repository: nagaraju-ssa/avantiq-repo
-          ref: ${{ vars.AVANTIQ_CORE_REF || 'ab6504b389240aa95b7de1d691a081cd06e9d2f4' }}
-          token: ${{ secrets.AVANTIQ_CORE_GITHUB_TOKEN }}
-          path: .dependencies/avantiq-core
+          repository: nagaraju-ssa/orbit-repo
+          ref: ${{ vars.ORBIT_CORE_REF || 'ab6504b389240aa95b7de1d691a081cd06e9d2f4' }}
+          token: ${{ secrets.ORBIT_CORE_GITHUB_TOKEN }}
+          path: .dependencies/orbit-core
           persist-credentials: false
 
       - uses: actions/setup-python@v5
@@ -38,9 +38,9 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: pip
 
-      - name: Install AvantiQ Core from GitHub checkout
-        if: env.AVANTIQ_CORE_SOURCE == 'github'
-        run: python -m pip install ./.dependencies/avantiq-core
+      - name: Install Orbit Core from GitHub checkout
+        if: env.ORBIT_CORE_SOURCE == 'github'
+        run: python -m pip install ./.dependencies/orbit-core
 
       - name: Install use case
         run: python -m pip install -e ".[test]"

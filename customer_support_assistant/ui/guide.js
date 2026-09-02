@@ -1,4 +1,4 @@
-const themeKey = document.body.dataset.themeKey || "avantiq-usecase-theme";
+const themeKey = document.body.dataset.themeKey || "orbit-usecase-theme";
 const applyTheme = (theme) => {
   document.documentElement.dataset.theme = theme;
   document.querySelector("#guide-theme").textContent = theme === "dark" ? "Light theme" : "Dark theme";

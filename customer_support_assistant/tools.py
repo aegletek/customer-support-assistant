@@ -3,7 +3,7 @@ from copy import deepcopy
 from datetime import datetime, timedelta, timezone
 from typing import Protocol
 
-from avantiq_core import (
+from orbit_core import (
     BaseTool,
     ToolMetadata,
     ToolResponse,

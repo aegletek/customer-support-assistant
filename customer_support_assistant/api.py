@@ -11,9 +11,9 @@ from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field
 
-from avantiq_core import WorkflowRequest
-from avantiq_core.admin import AdminOnboarding, AdminWorkflowTelemetry, CostSource
-from avantiq_core.api.documentation import mount_documentation_pages
+from orbit_core import WorkflowRequest
+from orbit_core.admin import AdminOnboarding, AdminWorkflowTelemetry, CostSource
+from orbit_core.api.documentation import mount_documentation_pages
 
 from .composition import UseCaseApplication, WORKFLOW_NAME, build_application
 from .domain import generate_ticket_id, guardrail_safe_uuid

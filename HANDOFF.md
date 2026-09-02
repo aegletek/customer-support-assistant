@@ -10,14 +10,14 @@ audit record. It is intended to reduce manual triage and knowledge-search time,
 improve response consistency, surface urgent work earlier, and preserve human
 ownership of customer communication and escalation.
 
-The in-product User Guide explains the business problem, AvantiQ solution,
+The in-product User Guide explains the business problem, Orbit solution,
 expected value, intended users, inputs and outputs, demo journey, controls, and
 automation boundaries.
 
 ## Current implementation
 
 - Workflow: `customer_support_triage`
-- Adapter: AvantiQ native workflow runtime
+- Adapter: Orbit native workflow runtime
 - Nodes: `intake -> classify -> knowledge -> respond -> persist`
 - API: FastAPI
 - Persistence: use-case-owned PostgreSQL database `customer_support`
@@ -32,12 +32,12 @@ automation boundaries.
 - Azure dashboard: <https://support.20.235.211.237.sslip.io/ui/>
 - Azure API docs: <https://support.20.235.211.237.sslip.io/docs>
 
-## How AvantiQ Core is used
+## How Orbit Core is used
 
-This repository is an application layer over the `avantiq-core` framework; it
+This repository is an application layer over the `orbit-core` framework; it
 does not copy or fork framework code.
 
-| AvantiQ Core capability | Use in this application |
+| Orbit Core capability | Use in this application |
 |---|---|
 | `bootstrap()` and registry | Registers agents, prompts, tools, and the workflow definition during composition. |
 | Native workflow runtime | Executes the five sequential nodes and passes structured results between them. |
@@ -49,7 +49,7 @@ does not copy or fork framework code.
 | Shared contracts | Keeps workflow requests, responses, agent profiles, tools, and manifest data compatible with the platform. |
 
 The use case owns ticket rules, support knowledge, classification, response
-constraints, persistence, API contracts, UI, and tests. AvantiQ Core owns the
+constraints, persistence, API contracts, UI, and tests. Orbit Core owns the
 generic orchestration, provider, telemetry, configuration, and platform
 integration contracts.
 
@@ -104,21 +104,21 @@ committed:
 - `AZURE_OPENAI_API_KEY`
 - `LANGFUSE_PUBLIC_KEY` and `LANGFUSE_SECRET_KEY`
 - `DATABASE_URL`
-- `AVANTIQ_ADMIN_CLIENT_TOKEN`, if Admin authentication is enabled
+- `ORBIT_ADMIN_CLIENT_TOKEN`, if Admin authentication is enabled
 
 Non-secret runtime values belong in `.env` locally and the AKS ConfigMap in
 Azure: provider endpoint/deployment/version, Langfuse URLs, retry/backoff,
 workflow timeout and concurrency, rate limit/cache, database pool controls, and
 Admin service/public URLs.
 
-`AVANTIQ_ADMIN_CLIENT_SERVICE_BASE_URL` is the cluster-reachable address used
-for health monitoring. `AVANTIQ_ADMIN_CLIENT_PUBLIC_BASE_URL` is the
+`ORBIT_ADMIN_CLIENT_SERVICE_BASE_URL` is the cluster-reachable address used
+for health monitoring. `ORBIT_ADMIN_CLIENT_PUBLIC_BASE_URL` is the
 browser-reachable HTTPS origin used for dashboard, guide, OpenAPI, and Swagger
 links.
 
 ## Local operation
 
-From `C:\workspace-new\avantiq-repo`:
+From `C:\workspace-new\orbit-repo`:
 
 ```powershell
 docker compose -f deployment\demo\compose.yaml up -d --build `
@@ -138,8 +138,8 @@ from the uncommitted platform demo environment file.
 
 ## Azure DEV operation
 
-- Resource group: `rg-avantiq-platform-dev`
-- AKS namespace: `avantiq`
+- Resource group: `rg-orbit-platform-dev`
+- AKS namespace: `orbit`
 - Deployment/service/ingress: `customer-support-assistant`
 - ACR repository: `customer-support-assistant`
 - Replica count: one economical DEV replica

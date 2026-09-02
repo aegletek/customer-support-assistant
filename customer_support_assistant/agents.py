@@ -1,6 +1,6 @@
 import json
 
-from avantiq_core import (
+from orbit_core import (
     ChatRequest,
     ToolRequest,
     UserMessage,

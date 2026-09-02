@@ -9,8 +9,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.pool import StaticPool
 import yaml
 
-from avantiq_core import ChatResponse, WorkflowRequest
-from avantiq_core.ai.llm.models import TokenUsage
+from orbit_core import ChatResponse, WorkflowRequest
+from orbit_core.ai.llm.models import TokenUsage
 from customer_support_assistant.api import create_app
 from customer_support_assistant.composition import WORKFLOW_NAME, build_application
 from customer_support_assistant.config import UseCaseSettings
@@ -225,7 +225,7 @@ def test_api_health_triage_and_case_retrieval():
     assert readme.status_code == 200
     assert "Customer Support Assistant" in readme.text
     assert handoff.status_code == 200
-    assert "Powered by AvantiQ" in handoff.text
+    assert "Powered by Orbit" in handoff.text
     assert response.status_code == 200
     assert payload["ticket_id"] == "DEMO-1001"
     assert payload["subject"] == TICKET["subject"]
@@ -247,7 +247,7 @@ def test_api_health_triage_and_case_retrieval():
     assert sum(point["runs"] for point in trends.json()) == 1
     assert dashboard.status_code == 200
     assert "<strong>Customer Support Assistant</strong>" in dashboard.text
-    assert "<small>Powered by AvantiQ</small>" in dashboard.text
+    assert "<small>Powered by Orbit</small>" in dashboard.text
     assert 'id="history-search"' in dashboard.text
     assert "Start guided demo" not in dashboard.text
     assert 'class="insight-grid"' in dashboard.text
@@ -263,7 +263,7 @@ def test_api_health_triage_and_case_retrieval():
     assert ".insight-grid" in experience_styles.text
     assert user_guide.status_code == 200
     assert "Business problem" in user_guide.text
-    assert "AvantiQ solution" in user_guide.text
+    assert "Orbit solution" in user_guide.text
     assert "Inputs, outputs, and system boundaries" in user_guide.text
     assert "Seven-minute demo script" in user_guide.text
     assert missing.status_code == 404
@@ -462,8 +462,8 @@ def test_default_application_requires_database_configuration() -> None:
 
 @pytest.mark.asyncio
 async def test_generated_identifiers_do_not_trigger_payment_card_guard() -> None:
-    from avantiq_core import RuntimeContextBuilder
-    from avantiq_core.guardrails.policies.pii_guard import PIIGuard
+    from orbit_core import RuntimeContextBuilder
+    from orbit_core.guardrails.policies.pii_guard import PIIGuard
 
     identifier = guardrail_safe_uuid()
     runtime = RuntimeContextBuilder.create("user", "workflow", "conversation")
